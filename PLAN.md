@@ -27,11 +27,11 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
 ## 3. Execution Phases
 
 ### Phase 1: Architecture Setup & Core Layout (Completed/In Progress)
-- [x] Initialize React + TypeScript + Tailwind project.
-- [x] Setup Shadcn UI and add base styling.
-- [x] Build core layout (Sidebar, Header).
+- [ ] Initialize React + TypeScript + Tailwind project.
+- [ ] Setup Shadcn UI and add base styling.
+- [ ] Build core layout (Sidebar, Header).
 - [ ] Create Global `Axios` instance with base URL and interceptors (Request/Response).
-- [x] Setup `QueryClientProvider` for React Query.
+- [ ] Setup `QueryClientProvider` for React Query.
 - [ ] Implement Top Header Dropdowns (Notifications Panel, Profile Menu).
 
 ### Phase 2: Authentication & Protected Routes (`/login`)

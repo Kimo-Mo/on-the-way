@@ -16,9 +16,9 @@ const Sidebar = ({
       {/* header */}
       <div className="p-3 border-b border-border min-h-16 flex items-center justify-between">
         {collapsed ? (
-          <Road className="text-accent-foreground" size={30} />
+          <Road className="text-primary" size={30} />
         ) : (
-          <h2 className="text-accent-foreground text-3xl capitalize font-extrabold">on the way</h2>
+          <h2 className="text-primary text-3xl capitalize font-extrabold">on the way</h2>
         )}
         <Button
           variant="ghost"

@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router';
 
 import App from './App.tsx';
 import { QueryProvider, ThemeProvider } from './providers';
+import { Toaster } from '@/components/ui/sonner';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -12,6 +13,7 @@ createRoot(document.getElementById('root')!).render(
       <ThemeProvider defaultTheme="system" storageKey="ontheway-theme">
         <BrowserRouter>
           <App />
+          <Toaster />
         </BrowserRouter>
       </ThemeProvider>
     </QueryProvider>

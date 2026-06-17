@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { ModeToggle, Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../ui';
 import SidebarContent from './SidebarContent';
-import AdminUserMenu from './AdminUserMenu';
+import ProfileMenu from './ProfileMenu';
+import NotificationsPanel from './NotificationsPanel';
 import { Menu } from 'lucide-react';
 
 const Header = () => {
@@ -30,7 +31,8 @@ const Header = () => {
         {/* notification icon & user menu */}
         <div className="flex items-center gap-4">
           <ModeToggle />
-          <AdminUserMenu />
+          <NotificationsPanel isLoading={false} notifications={[]} />
+          <ProfileMenu />
         </div>
       </div>
     </header>

@@ -5,17 +5,17 @@
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios *(mandatory)*
 
 <!--
   IMPORTANT: User stories should be PRIORITIZED as user journeys ordered by importance.
-  Each user story/journey must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
+  Each user story/journey must be INDEPENDENTLY VERIFIABLE - meaning if you implement just ONE of them,
   you should still have a viable MVP (Minimum Viable Product) that delivers value.
   
   Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
   Think of each story as a standalone slice of functionality that can be:
   - Developed independently
-  - Tested independently
+  - Verified independently
   - Deployed independently
   - Demonstrated to users independently
 -->
@@ -25,8 +25,6 @@
 [Describe this user journey in plain language]
 
 **Why this priority**: [Explain the value and why it has this priority level]
-
-**Independent Test**: [Describe how this can be tested independently - e.g., "Can be fully tested by [specific action] and delivers [specific value]"]
 
 **Acceptance Scenarios**:
 
@@ -41,8 +39,6 @@
 
 **Why this priority**: [Explain the value and why it has this priority level]
 
-**Independent Test**: [Describe how this can be tested independently]
-
 **Acceptance Scenarios**:
 
 1. **Given** [initial state], **When** [action], **Then** [expected outcome]
@@ -54,8 +50,6 @@
 [Describe this user journey in plain language]
 
 **Why this priority**: [Explain the value and why it has this priority level]
-
-**Independent Test**: [Describe how this can be tested independently]
 
 **Acceptance Scenarios**:
 
@@ -74,6 +68,8 @@
 
 - What happens when [boundary condition]?
 - How does system handle [error scenario]?
+- What loading, empty, validation, authorization, and remote API failure states must be visible to admins?
+- What responsive or accessibility constraints could block task completion?
 
 ## Requirements *(mandatory)*
 
@@ -113,6 +109,8 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+- **SC-005**: [UX consistency metric, e.g., "Admins can complete the primary workflow using keyboard navigation"]
+- **SC-006**: [Performance metric, e.g., "Primary table interactions respond within [threshold] under [data volume]"]
 
 ## Assumptions
 

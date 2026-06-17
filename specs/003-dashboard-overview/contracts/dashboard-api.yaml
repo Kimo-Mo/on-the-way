@@ -1,0 +1,318 @@
+openapi: 3.0.3
+info:
+  title: On The Way Dashboard Overview Contract
+  version: 0.1.0
+  description: Frontend/backend contract for the authenticated dashboard overview.
+servers:
+  - url: https://api.example.local
+    description: Placeholder backend origin configured by environment
+paths:
+  /admin/dashboard/overview:
+    get:
+      summary: Get dashboard overview data
+      operationId: getDashboardOverview
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Dashboard overview payload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardOverview"
+        "401":
+          description: Authentication is missing or expired
+        "500":
+          description: Dashboard overview could not be loaded
+  /admin/dashboard/flagged-content/{id}/approve:
+    post:
+      summary: Approve a flagged content item after confirmation
+      operationId: approveFlaggedContent
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/FlaggedContentId"
+      responses:
+        "200":
+          description: Updated flagged content item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlaggedContentItem"
+        "401":
+          description: Authentication is missing or expired
+        "404":
+          description: Flagged content item not found
+        "409":
+          description: Item state changed before the action completed
+  /admin/dashboard/flagged-content/{id}/remove:
+    post:
+      summary: Remove a flagged content item after confirmation
+      operationId: removeFlaggedContent
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/FlaggedContentId"
+      responses:
+        "200":
+          description: Updated flagged content item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlaggedContentItem"
+        "401":
+          description: Authentication is missing or expired
+        "404":
+          description: Flagged content item not found
+        "409":
+          description: Item state changed before the action completed
+  /admin/dashboard/flagged-content/{id}/flag-user:
+    post:
+      summary: Flag the related user after confirmation
+      operationId: flagRelatedUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/FlaggedContentId"
+      responses:
+        "200":
+          description: Updated flagged content item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlaggedContentItem"
+        "401":
+          description: Authentication is missing or expired
+        "404":
+          description: Flagged content item not found
+        "409":
+          description: Item state changed before the action completed
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    FlaggedContentId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique flagged content item identifier
+  schemas:
+    DashboardOverview:
+      type: object
+      required:
+        - metrics
+        - mapEvents
+        - activityEvents
+        - reportsTrend
+        - helpRequestCategories
+        - userDistribution
+        - flaggedContent
+        - flaggedContentPendingCount
+        - generatedAt
+      properties:
+        metrics:
+          type: array
+          items:
+            $ref: "#/components/schemas/DashboardMetric"
+        mapEvents:
+          type: array
+          items:
+            $ref: "#/components/schemas/MapEvent"
+        activityEvents:
+          type: array
+          maxItems: 5
+          items:
+            $ref: "#/components/schemas/ActivityEvent"
+        reportsTrend:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrendPoint"
+        helpRequestCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategoryCount"
+        userDistribution:
+          type: array
+          items:
+            $ref: "#/components/schemas/DistributionSegment"
+        flaggedContent:
+          type: array
+          maxItems: 3
+          items:
+            $ref: "#/components/schemas/FlaggedContentItem"
+        flaggedContentPendingCount:
+          type: integer
+          minimum: 0
+        generatedAt:
+          type: string
+          format: date-time
+    DashboardMetric:
+      type: object
+      required: [id, label, value]
+      properties:
+        id:
+          type: string
+          enum:
+            - totalUsers
+            - totalReports
+            - activeHelpRequests
+            - serviceProviders
+            - reportsToday
+            - urgentIncidents
+        label:
+          type: string
+        value:
+          type: integer
+          minimum: 0
+        trend:
+          $ref: "#/components/schemas/MetricTrend"
+        targetRoute:
+          type: string
+    MetricTrend:
+      type: object
+      required: [direction, percentage, periodLabel, meaning]
+      properties:
+        direction:
+          type: string
+          enum: [up, down, flat]
+        percentage:
+          type: number
+          minimum: 0
+        periodLabel:
+          type: string
+        meaning:
+          type: string
+          enum: [positive, negative, neutral]
+    MapEvent:
+      type: object
+      required: [id, category, title, coordinates, status, timestamp]
+      properties:
+        id:
+          type: string
+        category:
+          type: string
+          enum: [urgentReport, helpRequest, provider]
+        title:
+          type: string
+        coordinates:
+          $ref: "#/components/schemas/Coordinates"
+        status:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        targetRoute:
+          type: string
+    Coordinates:
+      type: object
+      required: [lat, lng]
+      properties:
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+        lng:
+          type: number
+          minimum: -180
+          maximum: 180
+    ActivityEvent:
+      type: object
+      required: [id, type, title, actorOrSource, timestamp]
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - reportSubmitted
+            - reportVerified
+            - providerRegistered
+            - userFlagged
+            - announcementPublished
+            - system
+        title:
+          type: string
+        actorOrSource:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        targetRoute:
+          type: string
+        tone:
+          type: string
+          enum: [default, success, warning, danger, info]
+    TrendPoint:
+      type: object
+      required: [label, value]
+      properties:
+        label:
+          type: string
+        value:
+          type: integer
+          minimum: 0
+        timestamp:
+          type: string
+          format: date-time
+    CategoryCount:
+      type: object
+      required: [category, count]
+      properties:
+        category:
+          type: string
+        count:
+          type: integer
+          minimum: 0
+        targetRoute:
+          type: string
+    DistributionSegment:
+      type: object
+      required: [label, count, percentage]
+      properties:
+        label:
+          type: string
+        count:
+          type: integer
+          minimum: 0
+        percentage:
+          type: number
+          minimum: 0
+          maximum: 100
+        targetRoute:
+          type: string
+    FlaggedContentItem:
+      type: object
+      required:
+        - id
+        - title
+        - locationOrSource
+        - reason
+        - reportedAgeLabel
+        - status
+        - availableActions
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        locationOrSource:
+          type: string
+        reason:
+          type: string
+        reportedAgeLabel:
+          type: string
+        status:
+          type: string
+          enum: [pending, approved, removed, userFlagged]
+        availableActions:
+          type: array
+          items:
+            type: string
+            enum: [approve, remove, flagUser]
+        targetRoute:
+          type: string

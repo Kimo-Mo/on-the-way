@@ -45,8 +45,8 @@ const menuItems = [
   },
   {
     icon: Megaphone,
-    label: 'Notification',
-    path: '/notification',
+    label: 'Notifications',
+    path: '/notifications',
   },
   {
     icon: ChartColumn,
@@ -56,7 +56,7 @@ const menuItems = [
   {
     icon: Settings,
     label: 'Settings',
-    path: '/Settings',
+    path: '/settings',
   },
 ];
 const SidebarContent = ({
@@ -74,7 +74,7 @@ const SidebarContent = ({
           to={item.path}
           key={item.path}
           onClick={() => setMenuOpen && setMenuOpen(false)}
-          className={`flex items-center transition-all duration-150 py-2 px-3 rounded-[10px] ${!collapsed && 'gap-3'} ${pathname === item.path ? 'bg-primary/10 text-primary border-s-4 border-primary' : 'hover:text-primary hover:bg-primary/10'}`}>
+          className={`flex items-center transition-all duration-150 py-2 px-3 rounded-xl ${!collapsed && 'gap-3'} ${pathname === item.path ? 'bg-primary/10 text-primary border-s-4 border-primary' : 'hover:text-primary hover:bg-primary/10'}`}>
           <item.icon />
           <span className={`capitalize ${collapsed && 'hidden'}`}>{item.label}</span>
         </Link>
