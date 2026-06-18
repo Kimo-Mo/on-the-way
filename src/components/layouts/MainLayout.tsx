@@ -6,16 +6,14 @@ import Header from './Header';
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   return (
-    <div className="min-h-screen flex">
-      <aside>
-        <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
-      </aside>
-      <main className={`flex-1 ${collapsed ? 'lg:ms-20!' : 'lg:ms-65!'}`}>
+    <div className="flex min-h-screen bg-background text-foreground">
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+      <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
         <Header />
-        <div className="main-container">
+        <main className="main-container flex-1">
           <Outlet />
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };

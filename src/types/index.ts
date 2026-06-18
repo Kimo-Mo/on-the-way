@@ -15,3 +15,15 @@ export interface NavItem {
   href: string;
   badge?: number | string;
 }
+
+export type {
+  UserRole,
+  UserStatus,
+  User,
+  UserActivity,
+  UserActivityType,
+  UserDetails,
+  UsersQueryParams,
+  PaginatedResponse,
+  UsersListResponse,
+} from './users';

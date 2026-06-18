@@ -11,8 +11,8 @@ const Sidebar = ({
   setCollapsed: Dispatch<SetStateAction<boolean>>;
 }) => {
   return (
-    <div
-      className={`hidden lg:flex bg-card border-e border-border fixed inset-0 z-10 flex-col overflow-y-auto overflow-x-hidden ${collapsed ? 'w-20' : 'w-65'}`}>
+    <aside
+      className={`hidden lg:flex bg-card border-e border-border min-h-screen flex-col overflow-y-auto overflow-x-hidden ${collapsed ? 'w-20' : 'w-65!'}`}>
       {/* header */}
       <div className="p-3 border-b border-border min-h-16 flex items-center justify-between">
         {collapsed ? (
@@ -29,7 +29,7 @@ const Sidebar = ({
         </Button>
       </div>
       <SidebarContent collapsed={collapsed} />
-    </div>
+    </aside>
   );
 };
 

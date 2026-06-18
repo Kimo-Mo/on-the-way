@@ -78,7 +78,6 @@ description: "Task list for Architecture Setup & Core Layout implementation"
 ### Implementation for User Story 2
 
 - [x] T019 [US2] Refine Axios interceptors to use Shadcn `Toast` for error display in `src/lib/axios.ts`
-- [x] T020 [US2] Create a dummy React Query hook `useHealthCheck` to verify Axios/Query configuration in `src/hooks/useHealthCheck.ts`
 
 ---
 
