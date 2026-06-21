@@ -8,3 +8,4 @@ export * from './input';
 export * from './table';
 export * from './progress';
 export * from './card';
+export * from './alert';

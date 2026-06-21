@@ -1,0 +1,105 @@
+import { useCallback, useRef, useState } from 'react';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Search, X } from 'lucide-react';
+
+interface ReportsToolbarProps {
+  search: string;
+  obstacleType: string;
+  status: string;
+  onSearchChange: (value: string) => void;
+  onObstacleTypeChange: (value: string) => void;
+  onStatusChange: (value: string) => void;
+  onClearFilters: () => void;
+  isFiltered: boolean;
+}
+
+export const ReportsToolbar = ({
+  search,
+  obstacleType,
+  status,
+  onSearchChange,
+  onObstacleTypeChange,
+  onStatusChange,
+  onClearFilters,
+  isFiltered,
+}: ReportsToolbarProps) => {
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [prevSearch, setPrevSearch] = useState(search);
+  const [inputValue, setInputValue] = useState(search);
+  if (search !== prevSearch) {
+    setPrevSearch(search);
+    setInputValue(search);
+  }
+
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setInputValue(value);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+      debounceRef.current = setTimeout(() => {
+        onSearchChange(value);
+      }, 300);
+    },
+    [onSearchChange]
+  );
+
+  return (
+    <div className="flex flex-wrap items-center gap-3 mb-4">
+      <div className="relative flex-1 min-w-50">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+        <Input
+          type="search"
+          placeholder="Search by location or description…"
+          value={inputValue}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          className="pl-9"
+          aria-label="Search reports by location or description"
+        />
+      </div>
+
+      <Select value={obstacleType || 'all'} onValueChange={onObstacleTypeChange}>
+        <SelectTrigger className="w-44">
+          <SelectValue placeholder="All Types" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Types</SelectItem>
+          <SelectItem value="pothole">Pothole</SelectItem>
+          <SelectItem value="roadDebris">Road Debris</SelectItem>
+          <SelectItem value="trafficLight">Traffic Light</SelectItem>
+          <SelectItem value="accident">Accident</SelectItem>
+          <SelectItem value="roadClosure">Road Closure</SelectItem>
+          <SelectItem value="fog">Fog</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select value={status || 'all'} onValueChange={onStatusChange}>
+        <SelectTrigger className="w-36">
+          <SelectValue placeholder="All Status" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Status</SelectItem>
+          <SelectItem value="pending">Pending</SelectItem>
+          <SelectItem value="urgent">Urgent</SelectItem>
+          <SelectItem value="approved">Approved</SelectItem>
+          <SelectItem value="removed">Removed</SelectItem>
+        </SelectContent>
+      </Select>
+
+      {isFiltered && (
+        <Button variant="ghost" size="sm" onClick={onClearFilters} aria-label="Clear all filters">
+          <X className="mr-1 h-3.5 w-3.5" />
+          Clear filters
+        </Button>
+      )}
+    </div>
+  );
+};

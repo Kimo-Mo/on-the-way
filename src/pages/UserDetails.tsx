@@ -1,8 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Button, Card, CardContent, CardHeader, Progress, Skeleton } from '@/components/ui';
 import { ChevronLeft, UserX } from 'lucide-react';
 import { useUserDetails } from '@/hooks/useUserDetails';
 import { UserRoleBadge, UserStatusBadge } from '@/components/users';

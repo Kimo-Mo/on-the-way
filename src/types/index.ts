@@ -27,3 +27,20 @@ export type {
   PaginatedResponse,
   UsersListResponse,
 } from './users';
+
+export type {
+  ObstacleType,
+  ReportStatus,
+  RemovalReason,
+  ReportSubmitter,
+  CommunityVotes,
+  GpsCoordinates,
+  Report,
+  ReportDetails,
+  ReportsQueryParams,
+  ReportsListResponse,
+  RemoveReportPayload,
+  RemoveReportFormValues,
+} from './reports';
+
+export { removeReportSchema } from './reports';

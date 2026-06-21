@@ -1,10 +1,8 @@
 import { Route, Routes } from 'react-router';
 import MainLayout from './components/layouts';
-import { Dashboard, UsersManagement, UserDetails } from './pages';
+import { Dashboard, UsersManagement, UserDetails, ReportsManagement, ReportDetails } from './pages';
 import { Login } from './pages/Login';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
-
-
 
 function App() {
   return (
@@ -19,7 +17,8 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/users" element={<UsersManagement />} />
         <Route path="/users/:id" element={<UserDetails />} />
-        <Route path="/reports" element={<h1>Reports</h1>} />
+        <Route path="/reports" element={<ReportsManagement />} />
+        <Route path="/reports/:id" element={<ReportDetails />} />
         <Route path="/help-requests" element={<h1>Help Requests</h1>} />
         <Route path="/service-providers" element={<h1>Service Providers</h1>} />
         <Route path="/moderation" element={<h1>Moderation</h1>} />

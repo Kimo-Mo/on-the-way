@@ -1,10 +1,12 @@
-import { StatsCards } from '@/components/dashboard';
+import {
+  FlaggedContentPanel,
+  InteractiveMap,
+  RecentActivity,
+  StatsCards,
+} from '@/components/dashboard';
 import { PageHeader } from '@/components/shared';
 import { useDashboardOverview } from '@/hooks/useDashboardOverview';
-import { InteractiveMap } from '@/components/dashboard/InteractiveMap';
-import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { lazy, Suspense, memo } from 'react';
-import { FlaggedContentPanel } from '@/components/dashboard/FlaggedContentPanel';
 
 const ReportsTrendChart = lazy(() =>
   import('@/components/dashboard/ReportsTrendChart').then((m) => ({ default: m.ReportsTrendChart }))

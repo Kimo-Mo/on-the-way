@@ -62,7 +62,7 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
 - [ ] Build `ReportsList` view with standard layout (Toolbar + Table/List).
 - [ ] Build `ReportDetails` page (`/reports/:id`) showing:
     - Report description and attached images.
-    - Map View (integrating basic map component displaying coordinates).
+    - Map View (integrating basic leaflet map component displaying coordinates).
     - Quick action buttons (Approve, Mark as Urgent, Remove).
 
 ### Phase 6: Service Providers (`/providers`)
