@@ -66,6 +66,7 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
     - Quick action buttons (Approve, Mark as Urgent, Remove).
 
 ### Phase 6: Service Providers (`/providers`)
+- screens: 'public/screens/Screenshot (21).png' -the left screen- & 'public/screens/Screenshot (22).png'
 - [ ] Define TypeScript interfaces for Providers (id, name, type, rating, status).
 - [ ] Create `useGetProviders` and `useUpdateProviderStatus` hooks.
 - [ ] Build `ProvidersTable` (categorized by Towing, Medical, Fuel, etc.).
@@ -73,6 +74,7 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
 - [ ] Implement Approve/Reject/Suspend action modals.
 
 ### Phase 7: Moderation Panel (`/moderation`)
+- screens: 'public/screens/Screenshot (21).png' -the right screen-
 - [ ] Create hooks for fetching flagged content (`useGetFlaggedReports`, `useGetSuspiciousUsers`).
 - [ ] Build `ModerationDashboard` layout with split sections (Flagged Reports vs. Suspicious Users).
 - [ ] Implement quick-action cards for moderation (Warn, Suspend, Remove).

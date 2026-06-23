@@ -48,7 +48,7 @@ export const dashboardFixtures: DashboardOverview = {
         periodLabel: 'vs last month',
         meaning: 'positive',
       },
-      targetRoute: '/service-providers',
+      targetRoute: '/providers',
     },
     {
       id: 'reportsToday',
@@ -101,7 +101,7 @@ export const dashboardFixtures: DashboardOverview = {
       coordinates: { lat: 30.0698, lng: 31.2477 },
       status: 'active',
       timestamp: '2026-06-15T08:00:00Z',
-      targetRoute: '/service-providers',
+      targetRoute: '/providers',
     },
   ],
   activityEvents: [
@@ -129,7 +129,7 @@ export const dashboardFixtures: DashboardOverview = {
       title: 'Provider registered: City Services',
       actorOrSource: 'system',
       timestamp: '2026-06-15T09:45:00Z',
-      targetRoute: '/service-providers',
+      targetRoute: '/providers',
       tone: 'info',
     },
     {

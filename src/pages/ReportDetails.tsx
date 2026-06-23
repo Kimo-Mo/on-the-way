@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
-import { ChevronLeft } from 'lucide-react';
+import { ArrowLeft, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -45,10 +45,9 @@ const ReportDetails = () => {
 
   if (isLoading) {
     return (
-      <section className="py-7 space-y-6 max-w-6xl mx-auto">
-        <Button variant="outline" onClick={() => navigate(-1)} className="gap-1">
-          <ChevronLeft className="h-4 w-4" />
-          Back
+      <section className="py-7 space-y-6">
+        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Reports
         </Button>
         <div className="space-y-4">
           <Skeleton className="h-10 w-64" />
@@ -68,10 +67,6 @@ const ReportDetails = () => {
   if (isError || !report) {
     return (
       <section className="py-7 space-y-6 max-w-6xl mx-auto">
-        <Button variant="outline" onClick={() => navigate(-1)} className="gap-1">
-          <ChevronLeft className="h-4 w-4" />
-          Back
-        </Button>
         <Card className="w-full max-w-md mx-auto text-center">
           <CardContent className="py-12 space-y-4">
             <h2 className="text-2xl font-bold">Report Not Found</h2>
@@ -108,17 +103,12 @@ const ReportDetails = () => {
   const canMarkUrgent = report.status === 'pending';
 
   return (
-    <section className="py-7 space-y-6 max-w-6xl mx-auto">
+    <section className="py-7 space-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(-1)}
-            className="gap-1 px-2 hover:bg-transparent -ml-2">
-            <ChevronLeft className="h-5 w-5" />
-            <span className="text-lg font-semibold">Report Details</span>
-          </Button>
-        </div>
+        <Button variant="ghost" onClick={() => navigate(-1)} className="gap-1">
+          <ChevronLeft className="h-4 w-4" />
+          Back to Reports
+        </Button>
         <ReportStatusBadge status={report.status} />
       </div>
 

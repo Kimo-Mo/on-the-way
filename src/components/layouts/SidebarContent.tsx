@@ -36,7 +36,7 @@ const menuItems = [
   {
     icon: Building2,
     label: 'Service Providers',
-    path: '/service-providers',
+    path: '/providers',
   },
   {
     icon: Shield,

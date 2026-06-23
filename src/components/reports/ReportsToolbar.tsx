@@ -67,7 +67,7 @@ export const ReportsToolbar = ({
       </div>
 
       <Select value={obstacleType || 'all'} onValueChange={onObstacleTypeChange}>
-        <SelectTrigger className="w-44">
+        <SelectTrigger className="w-40">
           <SelectValue placeholder="All Types" />
         </SelectTrigger>
         <SelectContent>
@@ -82,11 +82,11 @@ export const ReportsToolbar = ({
       </Select>
 
       <Select value={status || 'all'} onValueChange={onStatusChange}>
-        <SelectTrigger className="w-36">
-          <SelectValue placeholder="All Status" />
+        <SelectTrigger className="w-40">
+          <SelectValue placeholder="All Statuses" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Status</SelectItem>
+          <SelectItem value="all">All Statuses</SelectItem>
           <SelectItem value="pending">Pending</SelectItem>
           <SelectItem value="urgent">Urgent</SelectItem>
           <SelectItem value="approved">Approved</SelectItem>

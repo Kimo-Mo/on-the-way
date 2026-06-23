@@ -44,3 +44,36 @@ export type {
 } from './reports';
 
 export { removeReportSchema } from './reports';
+
+export type {
+  ProviderServiceType,
+  ProviderStatus,
+  VerificationStatus,
+  VerificationDocumentType,
+  VerificationDocument,
+  ProviderRatingSummary,
+  CustomerReview,
+  Provider,
+  ProviderDetails,
+  ProviderStatusAction,
+  ProviderDecisionReason,
+  StatusDecision,
+  ProvidersQueryParams,
+  ProvidersListResponse,
+  ApproveProviderPayload,
+  RejectProviderPayload,
+  SuspendProviderPayload,
+  UpdateProviderStatusPayload,
+  RejectProviderFormValues,
+  SuspendProviderFormValues,
+} from './providers';
+
+export {
+  MANDATORY_DOCUMENT_TYPES,
+  providerDecisionReasonSchema,
+  rejectProviderSchema,
+  suspendProviderSchema,
+  getMissingRequiredDocumentLabels,
+  canApproveProvider,
+  getProviderStatusActionAvailability,
+} from './providers';

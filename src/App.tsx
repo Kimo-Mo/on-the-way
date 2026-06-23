@@ -1,6 +1,14 @@
 import { Route, Routes } from 'react-router';
 import MainLayout from './components/layouts';
-import { Dashboard, UsersManagement, UserDetails, ReportsManagement, ReportDetails } from './pages';
+import {
+  Dashboard,
+  UsersManagement,
+  UserDetails,
+  ReportsManagement,
+  ReportDetails,
+  ProvidersManagement,
+  ProviderDetails,
+} from './pages';
 import { Login } from './pages/Login';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
@@ -20,7 +28,8 @@ function App() {
         <Route path="/reports" element={<ReportsManagement />} />
         <Route path="/reports/:id" element={<ReportDetails />} />
         <Route path="/help-requests" element={<h1>Help Requests</h1>} />
-        <Route path="/service-providers" element={<h1>Service Providers</h1>} />
+        <Route path="/providers" element={<ProvidersManagement />} />
+        <Route path="/providers/:id" element={<ProviderDetails />} />
         <Route path="/moderation" element={<h1>Moderation</h1>} />
         <Route path="/notifications" element={<h1>Notifications</h1>} />
         <Route path="/analytics" element={<h1>Analytics</h1>} />

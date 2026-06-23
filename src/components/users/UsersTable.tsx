@@ -123,8 +123,6 @@ export const UsersTable = ({ users, isLoading, onViewDetails }: UsersTableProps)
                   <TableCell className="whitespace-nowrap">{user.trustScore}%</TableCell>
                   <TableCell className="whitespace-nowrap">
                     <Button
-                      variant="ghost"
-                      size="sm"
                       onClick={() => onViewDetails(user.id)}
                       aria-label={`View details for ${user.name}`}>
                       <Eye className="mr-1 h-3.5 w-3.5" />

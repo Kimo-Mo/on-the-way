@@ -5,7 +5,7 @@ export const DASHBOARD_ROUTES = {
   USERS: '/users',
   REPORTS: '/reports',
   HELP_REQUESTS: '/help-requests',
-  SERVICE_PROVIDERS: '/service-providers',
+  SERVICE_PROVIDERS: '/providers',
   MODERATION: '/moderation',
   ANALYTICS: '/analytics',
   NOTIFICATIONS: '/notifications',
