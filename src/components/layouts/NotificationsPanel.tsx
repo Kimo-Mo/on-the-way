@@ -19,7 +19,7 @@ const NotificationsPanel = ({ isLoading, notifications }: NotificationsPanelProp
         <Button variant="outline" size="icon" className="relative rounded-full">
           <Bell className="h-5 w-5" />
           {notifications.some((n) => !n.isRead) && (
-            <span className="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-destructive" />
+            <span className="absolute top-2 inset-e-2 flex size-2 rounded-full bg-destructive" />
           )}
         </Button>
       </PopoverTrigger>
@@ -62,7 +62,10 @@ const NotificationsPanel = ({ isLoading, notifications }: NotificationsPanelProp
         </div>
         <div className="border-t text-center">
           <Link to="/notifications" onClick={() => setOpen(!open)}>
-            <Button variant="ghost" size="sm" className="text-primary hover:text-primary w-full text-xs">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-primary hover:text-primary w-full text-xs">
               View all
             </Button>
           </Link>

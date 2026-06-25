@@ -9,6 +9,7 @@ import {
   ProvidersManagement,
   ProviderDetails,
   ModerationPanel,
+  NotificationsPage,
 } from './pages';
 import { Login } from './pages/Login';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -32,7 +33,7 @@ function App() {
         <Route path="/providers" element={<ProvidersManagement />} />
         <Route path="/providers/:id" element={<ProviderDetails />} />
         <Route path="/moderation" element={<ModerationPanel />} />
-        <Route path="/notifications" element={<h1>Notifications</h1>} />
+        <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/analytics" element={<h1>Analytics</h1>} />
         <Route path="/settings" element={<h1>Settings</h1>} />
       </Route>

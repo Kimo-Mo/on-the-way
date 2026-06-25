@@ -98,3 +98,17 @@ export type {
 } from './moderation';
 
 export { FLAG_REASON_LABELS, PRIORITY_LABELS } from './moderation';
+
+export type {
+  NotificationStatus,
+  NotificationAudience,
+  NotificationDeliveryChannel,
+  AdminRole,
+  AdminNotification,
+  NotificationsListResponse,
+  CreateNotificationPayload,
+  UpdateNotificationPayload,
+  CreateNotificationFormValues,
+} from './notifications';
+
+export { createNotificationSchema, STATUS_LABELS, AUDIENCE_LABELS } from './notifications';

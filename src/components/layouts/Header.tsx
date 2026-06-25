@@ -4,9 +4,12 @@ import SidebarContent from './SidebarContent';
 import ProfileMenu from './ProfileMenu';
 import NotificationsPanel from './NotificationsPanel';
 import { Menu } from 'lucide-react';
+import { useGetHeaderNotifications } from '@/hooks/useGetHeaderNotifications';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: headerNotifications = [], isLoading: notificationsLoading } = useGetHeaderNotifications();
+
   return (
     <header className="min-h-16 border-b border-border flex items-center">
       <div className="main-container py-3 flex items-center justify-between lg:justify-end">
@@ -31,7 +34,7 @@ const Header = () => {
         {/* notification icon & user menu */}
         <div className="flex items-center gap-4">
           <ModeToggle />
-          <NotificationsPanel isLoading={false} notifications={[]} />
+          <NotificationsPanel isLoading={notificationsLoading} notifications={headerNotifications} />
           <ProfileMenu />
         </div>
       </div>

@@ -80,9 +80,11 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
 - [ ] Implement quick-action cards for moderation (Warn, Suspend, Remove).
 
 ### Phase 8: Notification & Communications (`/notification`)
+- ui screen: 'public/screens/Screenshot (23).png'
 - [ ] Create standard CRUD hooks for Notification.
 - [ ] Build Notification list displaying status (Published, Draft, Scheduled).
 - [ ] Build `CreateNotification` form utilizing `react-hook-form` and `zod` for validation.
+- [ ] make the NotificationsPanel in header work with this phase. 
 
 ### Phase 9: Analytics & Settings (`/analytics`, `/settings`)
 - [ ] Integrate `recharts` for visual data.
