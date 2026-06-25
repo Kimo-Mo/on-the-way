@@ -8,6 +8,7 @@ import {
   ReportDetails,
   ProvidersManagement,
   ProviderDetails,
+  ModerationPanel,
 } from './pages';
 import { Login } from './pages/Login';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -30,7 +31,7 @@ function App() {
         <Route path="/help-requests" element={<h1>Help Requests</h1>} />
         <Route path="/providers" element={<ProvidersManagement />} />
         <Route path="/providers/:id" element={<ProviderDetails />} />
-        <Route path="/moderation" element={<h1>Moderation</h1>} />
+        <Route path="/moderation" element={<ModerationPanel />} />
         <Route path="/notifications" element={<h1>Notifications</h1>} />
         <Route path="/analytics" element={<h1>Analytics</h1>} />
         <Route path="/settings" element={<h1>Settings</h1>} />

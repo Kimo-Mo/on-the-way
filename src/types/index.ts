@@ -77,3 +77,24 @@ export {
   canApproveProvider,
   getProviderStatusActionAvailability,
 } from './providers';
+
+export type {
+  ModerationReportAction,
+  ModerationUserAction,
+  FlagReason,
+  PendingItemType,
+  PendingItemPriority,
+  FlaggedReport,
+  SuspiciousUser,
+  PendingModerationItem,
+  ModerationSummary,
+  ModerationActionPayload,
+  ApproveReportPayload,
+  RemoveReportModerationPayload,
+  WarnUserOnReportPayload,
+  WarnUserPayload,
+  SuspendUserPayload,
+  FlagToAdminPayload,
+} from './moderation';
+
+export { FLAG_REASON_LABELS, PRIORITY_LABELS } from './moderation';
