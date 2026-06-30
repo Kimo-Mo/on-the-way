@@ -1,8 +1,15 @@
 import api from '@/lib/axios';
-import { reportsListFixture } from '@/lib/reports-fixtures';
-import type { ReportsListResponse, ReportsQueryParams, RemoveReportPayload } from '@/types/reports';
+import { reportsListFixture, reportDetailsFixtures } from '@/lib/reports-fixtures';
+import type {
+  ReportsListResponse,
+  ReportsQueryParams,
+  RemoveReportPayload,
+  ReportDetails,
+} from '@/types/reports';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { toast } from 'sonner';
+
+// ─── Reports List ─────────────────────────────────────────────────────────────
 
 export const fetchReports = async (params: ReportsQueryParams): Promise<ReportsListResponse> => {
   try {
@@ -24,6 +31,36 @@ export const useReports = (params: ReportsQueryParams) => {
     staleTime: 30_000,
   });
 };
+
+// ─── Report Details ───────────────────────────────────────────────────────────
+
+export const fetchReportDetails = async (id: string): Promise<ReportDetails> => {
+  try {
+    const { data } = await api.get<ReportDetails>(`/admin/reports/${id}`);
+    return data;
+  } catch (error) {
+    console.warn('[report-details] API unavailable, using fixture data:', error);
+    const fixture = reportDetailsFixtures[id];
+    if (fixture) {
+      return fixture;
+    }
+    throw error;
+  }
+};
+
+export const REPORT_DETAILS_QUERY_KEY = (id: string) => ['reports', 'details', id] as const;
+
+export const useReportDetails = (id: string) => {
+  return useQuery({
+    queryKey: REPORT_DETAILS_QUERY_KEY(id),
+    queryFn: () => fetchReportDetails(id),
+    staleTime: 60_000,
+    enabled: !!id,
+    retry: 1,
+  });
+};
+
+// ─── Report Mutations ─────────────────────────────────────────────────────────
 
 export const useApproveReport = () => {
   const queryClient = useQueryClient();

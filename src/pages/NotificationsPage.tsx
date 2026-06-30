@@ -1,5 +1,4 @@
-import { useGetNotifications } from '@/hooks/useGetNotifications';
-import { useDeleteNotification } from '@/hooks/useDeleteNotification';
+import { useGetNotifications, useDeleteNotification } from '@/hooks/notifications/useNotifications';
 import { NotificationsList } from '@/components/notifications';
 import { PageHeader } from '@/components/shared';
 

@@ -8,7 +8,7 @@ import {
   ReportsPagination,
   ReportsToolbar,
 } from '@/components/reports';
-import { useReports } from '@/hooks/useReports';
+import { useReports } from '@/hooks/reports/useReports';
 import type { ReportsQueryParams, ReportStatus, ObstacleType } from '@/types/reports';
 
 const ReportsManagement = () => {

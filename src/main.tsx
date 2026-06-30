@@ -1,6 +1,5 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router';
 
 import App from './App.tsx';
 import { QueryProvider, ThemeProvider } from './providers';
@@ -11,10 +10,8 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryProvider>
       <ThemeProvider defaultTheme="system" storageKey="ontheway-theme">
-        <BrowserRouter>
-          <App />
-          <Toaster />
-        </BrowserRouter>
+        <App />
+        <Toaster />
       </ThemeProvider>
     </QueryProvider>
   </StrictMode>

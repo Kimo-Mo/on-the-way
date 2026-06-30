@@ -1,9 +1,13 @@
 # Project: On The Way - Admin Dashboard
+
 ## 1. Project Overview
+
 A comprehensive web-based dashboard for managing the "On The Way" mobile application. The app assists drivers by identifying road obstacles (fog, potholes, radars, etc.) and provides access to emergency services (towing, medical, etc.). The dashboard allows administrators to manage users, reports, service providers, moderation, Notification, and view platform analytics.
 
 ## 2. Tech Stack & AI Conventions
+
 **Primary Stack:**
+
 - React.js (Vite)
 - TypeScript (Strict mode enabled)
 - Tailwind CSS
@@ -16,6 +20,7 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
 - Lucide React (Icons)
 
 **AI Coding Conventions:**
+
 1. **Component Structure:** Use functional components with hooks. Prefer small, reusable components.
 2. **Styling:** Strictly use Tailwind CSS utility classes. Avoid custom CSS unless absolutely necessary.
 3. **Data Fetching:** Do not use `useEffect` for data fetching. ALWAYS use React Query custom hooks (e.g., `useGetUsers`, `useUpdateReport`).
@@ -27,6 +32,7 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
 ## 3. Execution Phases
 
 ### Phase 1: Architecture Setup & Core Layout (Completed/In Progress)
+
 - [ ] Initialize React + TypeScript + Tailwind project.
 - [ ] Setup Shadcn UI and add base styling.
 - [ ] Build core layout (Sidebar, Header).
@@ -35,6 +41,7 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
 - [ ] Implement Top Header Dropdowns (Notifications Panel, Profile Menu).
 
 ### Phase 2: Authentication & Protected Routes (`/login`)
+
 - [ ] Create authentication state management (using `Zustand` or React Context) to manage user session and tokens.
 - [ ] Build `Login` page layout using Shadcn UI forms.
 - [ ] Implement `useLogin` React Query mutation to handle API authentication and error mapping.
@@ -42,6 +49,7 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
 - [ ] Configure Axios interceptors to automatically attach the `Authorization: Bearer <token>` to all outgoing requests and handle 401 Unauthorized responses (e.g., token refresh or forced logout).
 
 ### Phase 3: Dashboard Overview (`/`)
+
 - [ ] Create `useGetDashboardStats` React Query hook to fetch aggregated data for the home page.
 - [ ] Build `StatsCards` grid (Total Users, Total Reports, Active Help Requests, etc.) with percentage trend indicators.
 - [ ] Implement `InteractiveMap` widget displaying real-time pins for urgent reports, help requests, and providers (using a library like `react-leaflet` or `google-map-react`).
@@ -49,6 +57,7 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
 - [ ] Integrate `recharts` to build the "Reports Over Time" line chart and "Help Requests by Category" bar chart.
 
 ### Phase 4: Users Management (`/users`)
+
 - [ ] Define TypeScript interfaces for User (id, name, email, role, status, trustScore).
 - [ ] Create `useGetUsers` React Query hook with pagination and filtering params.
 - [ ] Build `UsersTableToolbar` (Search input, Role/Status filters).
@@ -57,15 +66,17 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
 - [ ] Build `UserDetails` page (`/users/:id`) to display full profile and activity history.
 
 ### Phase 5: Reports & Obstacles Management (`/reports`)
+
 - [ ] Define TypeScript interfaces for Reports (id, location, coordinates, type, status, upvotes, downvotes).
 - [ ] Create `useGetReports` React Query hook.
 - [ ] Build `ReportsList` view with standard layout (Toolbar + Table/List).
 - [ ] Build `ReportDetails` page (`/reports/:id`) showing:
-    - Report description and attached images.
-    - Map View (integrating basic leaflet map component displaying coordinates).
-    - Quick action buttons (Approve, Mark as Urgent, Remove).
+  - Report description and attached images.
+  - Map View (integrating basic leaflet map component displaying coordinates).
+  - Quick action buttons (Approve, Mark as Urgent, Remove).
 
 ### Phase 6: Service Providers (`/providers`)
+
 - screens: 'public/screens/Screenshot (21).png' -the left screen- & 'public/screens/Screenshot (22).png'
 - [ ] Define TypeScript interfaces for Providers (id, name, type, rating, status).
 - [ ] Create `useGetProviders` and `useUpdateProviderStatus` hooks.
@@ -74,24 +85,43 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
 - [ ] Implement Approve/Reject/Suspend action modals.
 
 ### Phase 7: Moderation Panel (`/moderation`)
+
 - screens: 'public/screens/Screenshot (21).png' -the right screen-
 - [ ] Create hooks for fetching flagged content (`useGetFlaggedReports`, `useGetSuspiciousUsers`).
 - [ ] Build `ModerationDashboard` layout with split sections (Flagged Reports vs. Suspicious Users).
 - [ ] Implement quick-action cards for moderation (Warn, Suspend, Remove).
 
 ### Phase 8: Notification & Communications (`/notification`)
+
 - ui screen: 'public/screens/Screenshot (23).png'
 - [ ] Create standard CRUD hooks for Notification.
 - [ ] Build Notification list displaying status (Published, Draft, Scheduled).
 - [ ] Build `CreateNotification` form utilizing `react-hook-form` and `zod` for validation.
-- [ ] make the NotificationsPanel in header work with this phase. 
+- [ ] make the NotificationsPanel in header work with this phase.
 
 ### Phase 9: Analytics & Settings (`/analytics`, `/settings`)
+
+- ui screen: 'public/screens/Screenshot (25).png' and 'public/screens/Screenshot (26).png'
 - [ ] Integrate `recharts` for visual data.
 - [ ] Build `Analytics` page with Reports Trends (Area Chart), Requests by Type (Bar Chart), and User Growth (Line Chart).
 - [ ] Build `Settings` page with sections (Profile Settings, Notification Preferences, System Settings). Implement forms with save functionality.
 
-### Phase 10: Final Review & Integration
+### Phase 10: Help Requests Management (`/help-requests`)
+
+- [ ] Define TypeScript interfaces for Help Requests (id, category, status, location, user details, assigned provider, timeline events).
+- [ ] Create mock data and React Query hooks (`useGetHelpRequests`, `useGetHelpRequestDetails`).
+- [ ] Build `HelpRequestsList` view:
+  - Implement a toolbar with a search input and two Shadcn `<Select>` filters (for Category e.g., Medical, Towing; and for Status e.g., Active, Completed).
+  - Build a card-based list layout (NOT a standard table) to display request summaries. Each card should show an icon, status/category badges, location, user info, assigned provider, and a "View" button.
+- [ ] Build `HelpRequestDetails` page (`/help-requests/:id`) containing:
+  - `Request Description` section with exact location text and coordinates.
+  - `User Information` and `Assigned Provider` summary cards (including ETA).
+  - `Location on Map` component (reusing the `react-leaflet` setup to place a marker on the exact coordinates).
+  - `Request Timeline` component showing chronological status updates (Created, Provider notified, etc.) using vertical connected dots.
+  - `Action Panel` with full-width buttons: Contact User, Mark as Completed, Reassign Provider, Cancel Request.
+
+### Phase 11: Final Review & Integration
+
 - [ ] Connect all mock React Query hooks to the live .NET backend endpoints.
 - [ ] Comprehensive testing for loading states, error boundaries, and empty states.
 - [ ] Polish responsive design for smaller screens (if required).

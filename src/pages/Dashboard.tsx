@@ -5,7 +5,7 @@ import {
   StatsCards,
 } from '@/components/dashboard';
 import { PageHeader } from '@/components/shared';
-import { useDashboardOverview } from '@/hooks/useDashboardOverview';
+import { useDashboardOverview } from '@/hooks/dashboard/useDashboard';
 import { lazy, Suspense, memo } from 'react';
 
 const ReportsTrendChart = lazy(() =>

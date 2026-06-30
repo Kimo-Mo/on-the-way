@@ -4,7 +4,7 @@ import SidebarContent from './SidebarContent';
 import ProfileMenu from './ProfileMenu';
 import NotificationsPanel from './NotificationsPanel';
 import { Menu } from 'lucide-react';
-import { useGetHeaderNotifications } from '@/hooks/useGetHeaderNotifications';
+import { useGetHeaderNotifications } from '@/hooks/notifications/useNotifications';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);

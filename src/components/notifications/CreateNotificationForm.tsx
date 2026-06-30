@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useCreateNotification } from '@/hooks/useCreateNotification';
+import { useCreateNotification } from '@/hooks/notifications/useNotifications';
 import {
   createNotificationSchema,
   type CreateNotificationFormValues,

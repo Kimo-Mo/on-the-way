@@ -1,4 +1,4 @@
-import { useGetModerationSummary } from '@/hooks/useGetModerationSummary';
+import { useGetModerationSummary } from '@/hooks/moderation/useModeration';
 import {
   ModerationPageHeader,
   FlaggedReportsSection,

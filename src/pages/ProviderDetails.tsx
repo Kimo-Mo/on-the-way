@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
-import { useProviderDetails } from '@/hooks/useProviderDetails';
-import { useUpdateProviderStatus } from '@/hooks/useUpdateProviderStatus';
+import { useProviderDetails, useUpdateProviderStatus } from '@/hooks/providers/useProviders';
 import {
   ProviderDetailsSummary,
   VerificationDocumentsPanel,

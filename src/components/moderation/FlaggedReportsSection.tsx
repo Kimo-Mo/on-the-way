@@ -2,8 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CheckCircle } from 'lucide-react';
-import { useGetFlaggedReports } from '@/hooks/useGetFlaggedReports';
-import { useModerationAction } from '@/hooks/useModerationAction';
+import { useGetFlaggedReports, useModerationAction } from '@/hooks/moderation/useModeration';
 import { FlaggedReportCard } from './FlaggedReportCard';
 
 export function FlaggedReportsSection() {

@@ -1,8 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import { useAuthStore } from '../store/auth-store';
-// import api from '../lib/axios';
+import { useAuthStore } from '@/store/auth-store';
+// import api from '@/lib/axios';
 import type { AdminUser } from '@/types/auth';
-
 
 interface LoginResponse {
   token: string;
@@ -28,11 +27,11 @@ export const useAuth = () => {
 
 export const useLogin = () => {
   const { login } = useAuth();
-  
+
   return useMutation({
     mutationFn: async (/*credentials: Record<string, string>*/) => {
       // This is a placeholder for the actual API call to the backend for user authentication.
-      // const { data } = await api.post<LoginResponse>('/api/auth/login', credentials); 
+      // const { data } = await api.post<LoginResponse>('/api/auth/login', credentials);
 
       // Mocked response for testing purposes, should be replaced with actual API call in production
       await new Promise((resolve) => setTimeout(resolve, 1000));

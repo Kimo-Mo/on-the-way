@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useFlagUser } from '@/hooks/useReports';
+import { useFlagUser } from '@/hooks/reports/useReports';
 import { UserX } from 'lucide-react';
 
 interface FlagUserDialogProps {

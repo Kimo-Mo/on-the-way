@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router';
 import { Button, Card, CardContent, CardHeader, Progress, Skeleton } from '@/components/ui';
 import { ChevronLeft, UserX } from 'lucide-react';
-import { useUserDetails } from '@/hooks/useUserDetails';
+import { useUserDetails } from '@/hooks/users/useUsers';
 import { UserRoleBadge, UserStatusBadge } from '@/components/users';
 
 const activityColors: Record<string, string> = {

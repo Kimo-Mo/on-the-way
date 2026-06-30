@@ -3,7 +3,7 @@ import { ArrowLeft, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useReportDetails } from '@/hooks/useReportDetails';
+import { useReportDetails } from '@/hooks/reports/useReports';
 import {
   FlagUserDialog,
   ObstacleTypeBadge,
@@ -13,7 +13,7 @@ import {
   ReportMetaSidebar,
   ReportStatusBadge,
 } from '@/components/reports';
-import { useApproveReport, useMarkUrgent } from '@/hooks/useReports';
+import { useApproveReport, useMarkUrgent } from '@/hooks/reports/useReports';
 
 const ReportDetails = () => {
   const { id } = useParams<{ id: string }>();

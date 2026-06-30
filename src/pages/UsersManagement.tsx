@@ -2,7 +2,7 @@ import { useSearchParams, useNavigate } from 'react-router';
 import { PageHeader } from '@/components/shared';
 import { Alert, AlertDescription, Button } from '@/components/ui';
 import { UsersTable, UsersTableToolbar, UsersPagination } from '@/components/users';
-import { useUsers } from '@/hooks/useUsers';
+import { useUsers } from '@/hooks/users/useUsers';
 import type { UserRole, UsersQueryParams, UserStatus } from '@/types/users';
 
 const UsersManagement = () => {

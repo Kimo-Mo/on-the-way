@@ -1,6 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router';
-import { useProviders } from '@/hooks/useProviders';
-import { useUpdateProviderStatus } from '@/hooks/useUpdateProviderStatus';
+import { useProviders, useUpdateProviderStatus } from '@/hooks/providers/useProviders';
 import {
   ProvidersToolbar,
   ProvidersPagination,

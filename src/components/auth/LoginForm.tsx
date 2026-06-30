@@ -4,7 +4,7 @@ import * as z from 'zod';
 import { ArrowRight, Eye, EyeClosed, Loader2, Lock, Mail } from 'lucide-react';
 import { AxiosError } from 'axios';
 
-import { useLogin } from '../../hooks/useAuth';
+import { useLogin } from '@/hooks/auth/useAuth';
 import { Button } from '../ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';

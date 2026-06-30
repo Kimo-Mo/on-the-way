@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useGetPendingModerationItems } from '@/hooks/useGetPendingModerationItems';
+import { useGetPendingModerationItems } from '@/hooks/moderation/useModeration';
 import { PendingItemRow } from './PendingItemRow';
 
 export function PendingModerationQueue() {

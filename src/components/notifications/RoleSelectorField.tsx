@@ -1,15 +1,15 @@
 import { Badge } from '@/components/ui/badge';
-import type { AdminRole } from '@/types/notifications';
+import type { NotificationRole } from '@/types/notifications';
 
-const ALL_ROLES: AdminRole[] = ['Driver', 'ServiceProvider', 'Admin'];
+const ALL_ROLES: NotificationRole[] = ['Driver', 'ServiceProvider', 'Admin'];
 
 interface RoleSelectorFieldProps {
-  selectedRoles: AdminRole[];
-  onChange: (roles: AdminRole[]) => void;
+  selectedRoles: NotificationRole[];
+  onChange: (roles: NotificationRole[]) => void;
 }
 
 export function RoleSelectorField({ selectedRoles, onChange }: RoleSelectorFieldProps) {
-  const toggle = (role: AdminRole) => {
+  const toggle = (role: NotificationRole) => {
     if (selectedRoles.includes(role)) {
       onChange(selectedRoles.filter((r) => r !== role));
     } else {

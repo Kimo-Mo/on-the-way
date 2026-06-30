@@ -2,8 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CheckCircle } from 'lucide-react';
-import { useGetSuspiciousUsers } from '@/hooks/useGetSuspiciousUsers';
-import { useModerationAction } from '@/hooks/useModerationAction';
+import { useGetSuspiciousUsers, useModerationAction } from '@/hooks/moderation/useModeration';
 import { SuspiciousUserCard } from './SuspiciousUserCard';
 
 export function SuspiciousUsersSection() {

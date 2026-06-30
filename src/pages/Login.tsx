@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router';
 import { LoginForm } from '../components/auth/LoginForm';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '@/hooks/auth/useAuth';
 import { AlertTriangle, Shield } from 'lucide-react';
 
 export const Login = () => {

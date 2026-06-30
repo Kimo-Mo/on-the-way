@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { removeReportSchema, removalReasonLabels } from '@/types/reports';
 import type { RemoveReportFormValues } from '@/types/reports';
-import { useRemoveReport } from '@/hooks/useReports';
+import { useRemoveReport } from '@/hooks/reports/useReports';
 import { AlertTriangle } from 'lucide-react';
 
 interface RemoveReportDialogProps {

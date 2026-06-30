@@ -64,10 +64,10 @@ export const createNotificationSchema = z
       .max(500, 'Message must be 500 characters or fewer'),
     targetAudience: z.enum(['Broadcast', 'SpecificRoles']),
     type: z.enum(['Maintenance', 'Policy', 'Safety', 'Legal', 'Event'], {
-      errorMap: () => ({ message: 'Type is required' }),
+      message: 'Type is required',
     }),
     priority: z.enum(['High', 'Medium', 'Low'], {
-      errorMap: () => ({ message: 'Priority is required' }),
+      message: 'Priority is required',
     }),
     roles: z.array(z.enum(['Driver', 'ServiceProvider', 'Admin'])).optional(),
     scheduledAt: z.string().nullable().optional(),

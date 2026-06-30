@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { User, Settings, LogOut } from 'lucide-react';
 import { Link } from 'react-router';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth/useAuth';
 
 const ProfileMenu = () => {
   const { user, logout } = useAuth();
