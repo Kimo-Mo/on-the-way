@@ -62,6 +62,7 @@ export function useGetHeaderNotifications() {
     staleTime: 30_000,
     refetchInterval: 60_000,
     refetchIntervalInBackground: false,
+    refetchOnWindowFocus: false,
   });
 }
 

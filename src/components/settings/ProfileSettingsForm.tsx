@@ -150,8 +150,8 @@ export function ProfileSettingsForm({ onDirtyChange }: ProfileSettingsFormProps)
               )}
             />
             <div className="space-y-2">
-              <Label>Role</Label>
-              <Input disabled value={displayRole} />
+              <Label htmlFor="role">Role</Label>
+              <Input id="role" aria-label="Role" disabled value={displayRole} />
             </div>
             <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending ? 'Saving...' : 'Save Changes'}

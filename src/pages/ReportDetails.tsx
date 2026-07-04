@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router';
-import { ArrowLeft, ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -47,7 +47,7 @@ const ReportDetails = () => {
     return (
       <section className="py-7 space-y-6">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Reports
+          <ChevronLeft className="h-4 w-4" /> Back to Reports
         </Button>
         <div className="space-y-4">
           <Skeleton className="h-10 w-64" />

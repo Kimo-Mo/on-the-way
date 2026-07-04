@@ -23,9 +23,9 @@ const UserDetails = () => {
   if (isLoading) {
     return (
       <section className="py-7 space-y-6">
-        <Button variant="outline" onClick={() => navigate(-1)} className="gap-1">
-          <ChevronLeft className="h-4 w-4" />
-          Back
+        <Button variant="ghost" onClick={() => navigate(-1)} className="gap-1">
+          <ChevronLeft />
+          Back to Users
         </Button>
         <div className="flex items-center gap-3">
           <Skeleton className="h-10 w-10 rounded-full" />
@@ -83,9 +83,9 @@ const UserDetails = () => {
       <Button
         variant="ghost"
         onClick={() => navigate(-1)}
-        className="gap-1 px-2 hover:bg-transparent -ml-2">
-        <ChevronLeft className="h-5 w-5" />
-        <span className="text-lg font-semibold">Back to Users</span>
+        className="gap-1 px-2">
+        <ChevronLeft />
+        Back to Users
       </Button>
 
       <Card>

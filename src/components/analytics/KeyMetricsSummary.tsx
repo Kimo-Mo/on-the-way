@@ -36,7 +36,7 @@ export function KeyMetricsSummary({ data, isLoading }: KeyMetricsSummaryProps) {
             </p>
           </CardContent>
         </Card>
-        <Card className="bg-green-50 text-green-600 gap-0 justify-between">
+        <Card className="bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-300 gap-0 justify-between">
           <CardHeader className="pb-2">
             <CardTitle className="font-medium">Help Requests Completed</CardTitle>
           </CardHeader>
@@ -48,7 +48,7 @@ export function KeyMetricsSummary({ data, isLoading }: KeyMetricsSummaryProps) {
             </p>
           </CardContent>
         </Card>
-        <Card className="bg-purple-50 text-purple-600 gap-0 justify-between">
+        <Card className="bg-purple-50 dark:bg-purple-950/25 text-purple-600 dark:text-purple-300 gap-0 justify-between">
           <CardHeader className="pb-2">
             <CardTitle className="font-medium">New Users This Month</CardTitle>
           </CardHeader>
