@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
-import type { HelpRequestsByTypePoint } from '@/types/analytics';
+import type { ChartPoint } from '@/types/dashboard';
 
 interface HelpRequestsByTypeChartProps {
-  data: HelpRequestsByTypePoint[];
+  data: ChartPoint[];
   isLoading: boolean;
 }
 
@@ -41,7 +41,7 @@ export function HelpRequestsByTypeChart({ data, isLoading }: HelpRequestsByTypeC
               height: '100%',
             }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
+            <XAxis dataKey="label" />
             <YAxis />
             <Tooltip
               contentStyle={{
@@ -52,10 +52,7 @@ export function HelpRequestsByTypeChart({ data, isLoading }: HelpRequestsByTypeC
               cursor={{ stroke: 'var(--border)', strokeWidth: 1 }}
             />
             <Legend />
-            <Bar dataKey="medical" fill="#ff6b6b" />
-            <Bar dataKey="towing" fill="#4ecdc4" />
-            <Bar dataKey="fuel" fill="#45b7d1" />
-            <Bar dataKey="repair" fill="#7dac96" />
+            <Bar dataKey="value" name="Requests" fill="#ff6b6b" />
           </BarChart>
         </div>
       </CardContent>

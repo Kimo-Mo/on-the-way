@@ -1,10 +1,25 @@
 import { useParams, useNavigate } from 'react-router';
-import { Button, Card, CardContent, CardHeader, Progress, Skeleton } from '@/components/ui';
-import { ChevronLeft, UserX } from 'lucide-react';
-import { useUserDetails } from '@/hooks/users/useUsers';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Progress,
+  Skeleton,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui';
+import { ChevronLeft, UserX, Loader2 } from 'lucide-react';
+import { useUserDetails, useUpdateUserStatus } from '@/hooks/users/useUsers';
 import { UserRoleBadge, UserStatusBadge } from '@/components/users';
+import { CardSkeleton } from '@/components/shared';
 
 const activityColors: Record<string, string> = {
+  Incident: 'bg-blue-500',
+  Assistance: 'bg-purple-500',
   reportSubmitted: 'bg-blue-500',
   reportVerified: 'bg-green-500',
   helpRequestCreated: 'bg-purple-500',
@@ -12,6 +27,9 @@ const activityColors: Record<string, string> = {
   profileUpdated: 'bg-gray-500',
   suspended: 'bg-red-500',
   reactivated: 'bg-teal-500',
+  report: 'bg-primary',
+  help: 'bg-destructive',
+  interaction: 'bg-success',
 };
 
 const UserDetails = () => {
@@ -19,6 +37,7 @@ const UserDetails = () => {
   const navigate = useNavigate();
 
   const { data: user, isLoading, isError } = useUserDetails(id ?? '');
+  const { mutate: updateStatus, isPending: isUpdatingStatus } = useUpdateUserStatus();
 
   if (isLoading) {
     return (
@@ -27,21 +46,9 @@ const UserDetails = () => {
           <ChevronLeft />
           Back to Users
         </Button>
-        <div className="flex items-center gap-3">
-          <Skeleton className="h-10 w-10 rounded-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-6 w-48" />
-            <Skeleton className="h-4 w-32" />
-          </div>
-        </div>
-        <Card>
-          <CardContent className="space-y-4 p-6">
-            <Skeleton className="h-4 w-64" />
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-4 w-48" />
-          </CardContent>
-        </Card>
+        <CardSkeleton className="grid-cols-1 md:grid-cols-1 lg:grid-cols-1 h-64" count={1} />
+        <Skeleton className="h-10 w-64" />
+        <CardSkeleton className="grid-cols-1 md:grid-cols-1 lg:grid-cols-1 h-24" count={1} />
       </section>
     );
   }
@@ -80,21 +87,43 @@ const UserDetails = () => {
 
   return (
     <section className="py-7 space-y-6">
-      <Button
-        variant="ghost"
-        onClick={() => navigate(-1)}
-        className="gap-1 px-2">
+      <Button variant="ghost" onClick={() => navigate(-1)} className="gap-1 px-2">
         <ChevronLeft />
         Back to Users
       </Button>
 
       <Card>
         <CardHeader className="space-y-2">
-          <h1 className="text-3xl font-bold">{user.name}</h1>
-          <p className="text-muted-foreground">{user.email}</p>
-          <div className="flex items-center gap-2 flex-wrap">
-            <UserRoleBadge role={user.role} />
-            <UserStatusBadge status={user.status} />
+          <div className="flex justify-between items-start">
+            <div className="space-y-2">
+              {/* Backend returns `name` (not `fullName`) */}
+              <h1 className="text-3xl font-bold">{user.name ?? 'Unknown User'}</h1>
+              <p className="text-muted-foreground">{user.email}</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                <UserRoleBadge role={user.role} />
+                <UserStatusBadge status={user.status} />
+              </div>
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" disabled={isUpdatingStatus}>
+                  {isUpdatingStatus && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Change Status
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => updateStatus({ id: user.id, status: 'Active' })}>
+                  Set Active
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => updateStatus({ id: user.id, status: 'Suspended' })}>
+                  Suspend User
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => updateStatus({ id: user.id, status: 'Banned' })}>
+                  Ban User
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -108,22 +137,14 @@ const UserDetails = () => {
             </div>
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Member Since</p>
-              <p>{formatDate(user.joinedAt)}</p>
+              {/* Backend returns `joinedDate` (not `joinedAt`) */}
+              <p>{user.joinedDate ? formatDate(user.joinedDate) : '—'}</p>
             </div>
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Phone</p>
-              <p>{user.phone ?? '—'}</p>
+              {/* Backend returns `phone` (not `phone` optional) */}
+              <p>{user.phone || '—'}</p>
             </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Address</p>
-              <p>{user.address ?? '—'}</p>
-            </div>
-            {user.role === 'driver' && user.vehicleInfo && (
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Vehicle Info</p>
-                <p>{user.vehicleInfo}</p>
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>
@@ -134,19 +155,21 @@ const UserDetails = () => {
           <p className="text-muted-foreground">No activity recorded yet.</p>
         ) : (
           <div className="space-y-3">
-            {user.activityHistory.map((activity) => (
+            {user.activityHistory.map((activity, index) => (
               <div
-                key={activity.id}
-                className="flex items-start gap-3 p-3 rounded-lg border bg-card">
+                key={index}
+                className="flex items-center gap-3 p-3 rounded-lg border bg-card hover:border-primary transition-colors duration-200">
                 <div
-                  className={`h-2.5 w-2.5 rounded-full mt-1.5 shrink-0 ${activityColors[activity.type] || 'bg-muted'}`}
+                  className={`h-2.5 w-2.5 rounded-full shrink-0 ${activityColors[activity.type] ?? 'bg-muted'}`}
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm">{activity.description}</p>
                   <p className="text-xs text-muted-foreground">
-                    {new Date(activity.timestamp).toLocaleString()}
+                    {/* Backend returns `date` (not `timestamp`) */}
+                    {activity.date ? new Date(activity.date).toLocaleString() : '—'}
                   </p>
                 </div>
+                <Badge className="capitalize">{activity.type}</Badge>
               </div>
             ))}
           </div>

@@ -13,10 +13,10 @@ import { Search, X } from 'lucide-react';
 interface ReportsToolbarProps {
   search: string;
   obstacleType: string;
-  status: string;
+  sortOrder: string;
   onSearchChange: (value: string) => void;
   onObstacleTypeChange: (value: string) => void;
-  onStatusChange: (value: string) => void;
+  onSortOrderChange: (value: string) => void;
   onClearFilters: () => void;
   isFiltered: boolean;
 }
@@ -24,10 +24,10 @@ interface ReportsToolbarProps {
 export const ReportsToolbar = ({
   search,
   obstacleType,
-  status,
+  sortOrder,
   onSearchChange,
   onObstacleTypeChange,
-  onStatusChange,
+  onSortOrderChange,
   onClearFilters,
   isFiltered,
 }: ReportsToolbarProps) => {
@@ -68,29 +68,25 @@ export const ReportsToolbar = ({
 
       <Select value={obstacleType || 'all'} onValueChange={onObstacleTypeChange}>
         <SelectTrigger className="w-40">
-          <SelectValue placeholder="All Types" />
+          <SelectValue placeholder="Select Type" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Types</SelectItem>
-          <SelectItem value="pothole">Pothole</SelectItem>
-          <SelectItem value="roadDebris">Road Debris</SelectItem>
-          <SelectItem value="trafficLight">Traffic Light</SelectItem>
-          <SelectItem value="accident">Accident</SelectItem>
-          <SelectItem value="roadClosure">Road Closure</SelectItem>
-          <SelectItem value="fog">Fog</SelectItem>
+          <SelectItem value="Collision">Collision</SelectItem>
+          <SelectItem value="RoadClosure">Road Closure</SelectItem>
+          <SelectItem value="Obstacle">Obstacle</SelectItem>
+          <SelectItem value="SevereWeather">Severe Weather</SelectItem>
+          <SelectItem value="VehicleBreakdown">Vehicle Breakdown</SelectItem>
         </SelectContent>
       </Select>
 
-      <Select value={status || 'all'} onValueChange={onStatusChange}>
+      <Select value={sortOrder} onValueChange={onSortOrderChange}>
         <SelectTrigger className="w-40">
-          <SelectValue placeholder="All Statuses" />
+          <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Statuses</SelectItem>
-          <SelectItem value="pending">Pending</SelectItem>
-          <SelectItem value="urgent">Urgent</SelectItem>
-          <SelectItem value="approved">Approved</SelectItem>
-          <SelectItem value="removed">Removed</SelectItem>
+          <SelectItem value="desc">Latest</SelectItem>
+          <SelectItem value="asc">Oldest</SelectItem>
         </SelectContent>
       </Select>
 

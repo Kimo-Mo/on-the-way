@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
-import type { UserGrowthPoint } from '@/types/analytics';
+import type { ChartPoint } from '@/types/dashboard';
 
 interface UserGrowthChartProps {
-  data: UserGrowthPoint[];
+  data: ChartPoint[];
   isLoading: boolean;
 }
 
@@ -38,7 +38,7 @@ export function UserGrowthChart({ data, isLoading }: UserGrowthChartProps) {
               height: '100%',
             }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
+            <XAxis dataKey="label" />
             <YAxis />
             <Tooltip
               contentStyle={{
@@ -51,7 +51,8 @@ export function UserGrowthChart({ data, isLoading }: UserGrowthChartProps) {
             <Legend />
             <Line
               type="monotone"
-              dataKey="users"
+              dataKey="value"
+              name="Users"
               stroke="var(--primary)"
               strokeWidth={2}
               dot={{ r: 4 }}

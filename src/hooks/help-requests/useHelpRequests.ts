@@ -1,58 +1,86 @@
 import api from '@/lib/axios';
-import {
-  fetchHelpRequests,
-  fetchHelpRequestDetails,
-  updateHelpRequestStatus,
-  reassignProvider,
-} from '@/lib/help-requests-fixtures';
+import type { ApiResponse } from '@/types/api';
 import type {
-  HelpRequestsQueryParams,
-  HelpRequestsListResponse,
+  HelpRequest,
   HelpRequestDetails,
-  HelpRequestStatus,
+  HelpRequestsListResponse,
+  HelpRequestsQueryParams,
 } from '@/types/help-requests';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-// ─── Query keys ───────────────────────────────────────────────────────────────
+// ─── Query Keys ──────────────────────────────────────────────────────────────
+
 export const HELP_REQUESTS_QUERY_KEY = (params: HelpRequestsQueryParams) =>
   ['help-requests', params] as const;
-
 export const HELP_REQUEST_DETAILS_QUERY_KEY = (id: string) =>
   ['help-requests', 'details', id] as const;
 
-// ─── List query ───────────────────────────────────────────────────────────────
+// ─── Query Hooks ─────────────────────────────────────────────────────────────
+
+/**
+ * React Query hook for fetching the help requests list from GET /api/admin/help-requests.
+ * Backend wraps the response in ApiResponse<AdminHelpRequestListItem[]>.
+ */
 export const useHelpRequests = (params: HelpRequestsQueryParams) => {
   return useQuery({
     queryKey: HELP_REQUESTS_QUERY_KEY(params),
     queryFn: async () => {
-      try {
-        const { data } = await api.get<HelpRequestsListResponse>('/admin/help-requests', {
-          params,
-        });
-        return data;
-      } catch (error) {
-        console.warn('[help-requests] API unavailable, using fixture data:', error);
-        return fetchHelpRequests(params);
+      const apiParams: { search?: string; type?: string; sortOrder?: string } = {
+        search: params.search,
+        type: params.type,
+        sortOrder: params.sortOrder,
+      };
+      const response = await api.get<ApiResponse<HelpRequest[]>>('/admin/help-requests', {
+        params: apiParams,
+      });
+      const envelope = response.data;
+
+      if (!envelope.isSuccess || envelope.data === null) {
+        throw new Error(
+          typeof envelope.error === 'string'
+            ? envelope.error
+            : (envelope.error?.message ?? 'Failed to fetch help requests.')
+        );
       }
+
+      const items = envelope.data;
+      const result: HelpRequestsListResponse = {
+        data: items,
+        total: items.length,
+        page: params.page,
+        pageSize: params.pageSize,
+        totalPages: Math.ceil(items.length / params.pageSize) || 1,
+      };
+      return result;
     },
     placeholderData: keepPreviousData,
     staleTime: 30_000,
   });
 };
 
-// ─── Details query ────────────────────────────────────────────────────────────
+/**
+ * React Query hook for fetching a single help request's details from GET /api/admin/help-requests/{id}.
+ * Backend wraps the response in ApiResponse<AdminHelpRequestDetails>.
+ */
 export const useHelpRequestDetails = (id: string) => {
   return useQuery({
     queryKey: HELP_REQUEST_DETAILS_QUERY_KEY(id),
     queryFn: async () => {
-      try {
-        const { data } = await api.get<HelpRequestDetails>(`/admin/help-requests/${id}`);
-        return data;
-      } catch (error) {
-        console.warn('[help-request-details] API unavailable, using fixture data:', error);
-        return fetchHelpRequestDetails(id);
+      const response = await api.get<ApiResponse<HelpRequestDetails>>(
+        `/admin/help-requests/${id}`
+      );
+      const envelope = response.data;
+
+      if (!envelope.isSuccess || envelope.data === null) {
+        throw new Error(
+          typeof envelope.error === 'string'
+            ? envelope.error
+            : (envelope.error?.message ?? 'Failed to fetch help request details.')
+        );
       }
+
+      return envelope.data;
     },
     enabled: !!id,
     staleTime: 60_000,
@@ -60,12 +88,13 @@ export const useHelpRequestDetails = (id: string) => {
   });
 };
 
-// ─── Status mutation ──────────────────────────────────────────────────────────
+// ─── Mutation Hooks ──────────────────────────────────────────────────────────
+
 export const useUpdateHelpRequestStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, newStatus }: { id: string; newStatus: HelpRequestStatus }) =>
-      updateHelpRequestStatus(id, newStatus),
+    mutationFn: ({ id, newStatus }: { id: string; newStatus: string }) =>
+      api.put(`/admin/help-requests/${id}/status`, { newStatus }),
     onSuccess: (_, { id, newStatus }) => {
       toast.success(`Request marked as ${newStatus}.`);
       queryClient.invalidateQueries({ queryKey: ['help-requests'] });
@@ -77,12 +106,11 @@ export const useUpdateHelpRequestStatus = () => {
   });
 };
 
-// ─── Reassign provider mutation ───────────────────────────────────────────────
 export const useReassignProvider = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, providerId }: { id: string; providerId: string }) =>
-      reassignProvider(id, providerId),
+      api.put(`/admin/help-requests/${id}/provider`, { providerId }),
     onSuccess: (_, { id }) => {
       toast.success('Provider reassigned successfully.');
       queryClient.invalidateQueries({ queryKey: ['help-requests'] });

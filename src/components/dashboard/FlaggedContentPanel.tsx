@@ -97,29 +97,33 @@ export const FlaggedContentPanel = ({
       </div>
 
       <div className="space-y-3">
-        {items.slice(0, 3).map((item) => (
-          <div key={item.id} className="border border-border rounded-lg p-3">
+        {items.slice(0, 3).map((item, i) => {
+          const id = item.id ?? `flagged-${i}`;
+          const title = item.title ?? 'Untitled Content';
+          
+          return (
+          <div key={id} className="border border-border rounded-lg p-3">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-foreground">{item.title}</p>
+                <p className="text-sm font-medium text-foreground">{title}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {item.locationOrSource} • {item.reason}
+                  {item.locationOrSource ?? 'Unknown Source'} • {item.reason ?? 'No reason provided'}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">{item.reportedAgeLabel}</p>
+                <p className="text-xs text-muted-foreground mt-1">{item.reportedAgeLabel ?? ''}</p>
               </div>
             </div>
 
             <div className="mt-3 flex items-center gap-2">
-              {item.availableActions.map((action) => (
+              {(item.availableActions ?? []).map((action) => (
                 <ConfirmModerationAction
                   key={action}
-                  action={action}
-                  itemTitle={item.title}
-                  onConfirm={() => handleAction(action, item.id)}
-                  isLoading={isActionLoading(action)}
+                  action={action as 'approve' | 'remove' | 'flagUser'}
+                  itemTitle={title}
+                  onConfirm={() => handleAction(action as 'approve' | 'remove' | 'flagUser', id)}
+                  isLoading={isActionLoading(action as 'approve' | 'remove' | 'flagUser')}
                   triggerLabel={
                     <Button
-                      variant={actionVariant[action]}
+                      variant={actionVariant[action as 'approve' | 'remove' | 'flagUser'] ?? 'outline'}
                       size="sm"
                     >
                       {action}
@@ -137,7 +141,7 @@ export const FlaggedContentPanel = ({
               )}
             </div>
           </div>
-        ))}
+        )})}
       </div>
 
       {items.length > 3 && (

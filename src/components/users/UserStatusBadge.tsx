@@ -1,18 +1,22 @@
 import { Badge } from '@/components/ui/badge';
-import type { UserStatus } from '@/types/users';
 
 interface UserStatusBadgeProps {
-  status: UserStatus;
+  status: string;
 }
 
+const statusVariants: Record<string, string> = {
+  Active: 'bg-green-500/15 text-green-700 border-green-200 dark:text-green-400',
+  Suspended: 'bg-destructive/10 text-destructive border-destructive/20',
+  Banned: 'bg-red-900/10 text-red-800 border-red-300 dark:text-red-400',
+};
+
 export const UserStatusBadge = ({ status }: UserStatusBadgeProps) => {
-  const capitalized = status.charAt(0).toUpperCase() + status.slice(1);
+  const variantClass =
+    statusVariants[status] ?? 'bg-muted/50 text-muted-foreground border-border';
 
-  const variants: Record<UserStatus, string> = {
-    active: 'bg-green-500/15 text-green-700 border-green-200 dark:text-green-400',
-    suspended: 'bg-destructive/10 text-destructive border-destructive/20',
-    pending: 'bg-amber-500/15 text-amber-700 border-amber-200 dark:text-amber-400',
-  };
-
-  return <Badge variant="outline" className={variants[status]}>{capitalized}</Badge>;
+  return (
+    <Badge variant="outline" className={variantClass}>
+      {status}
+    </Badge>
+  );
 };

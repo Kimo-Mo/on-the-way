@@ -120,8 +120,24 @@ A comprehensive web-based dashboard for managing the "On The Way" mobile applica
   - `Request Timeline` component showing chronological status updates (Created, Provider notified, etc.) using vertical connected dots.
   - `Action Panel` with full-width buttons: Contact User, Mark as Completed, Reassign Provider, Cancel Request.
 
-### Phase 11: Final Review & Integration
+### Phase 11: Backend Integration, Refactoring & Final Polish
 
-- [ ] Connect all mock React Query hooks to the live .NET backend endpoints.
-- [ ] Comprehensive testing for loading states, error boundaries, and empty states.
-- [ ] Polish responsive design for smaller screens (if required).
+**1. Live API Integration & Data Mapping:**
+- [ ] Connect all React Query hooks to the live .NET backend using the provided `swagger.json` and Postman collection.
+- [ ] Implement data mappers inside the hooks to seamlessly transform backend response structures/keys (e.g., PascalCase to camelCase, mismatched names) into the existing frontend TypeScript interfaces without breaking the UI.
+
+**2. Mock Data Cleanup:**
+- [ ] Safely remove all hardcoded mock data files and variables that are now successfully connected to the live API.
+- [ ] STRICTLY RETAIN mock data only for features or endpoints that have not yet been implemented by the backend.
+
+**3. Hooks Architecture Standardization:**
+- [ ] Audit the `src/hooks` directory for consistency.
+- [ ] Refactor outlier hooks (specifically Settings and Analytics hooks) to strictly follow the standard React Query + Axios pattern used in the rest of the application (same error handling, same loading states, same structure).
+
+**4. Code Quality & Academic Commenting:**
+- [ ] Scrub the codebase to remove all AI-generated conversational comments (e.g., "I fixed this because...", "Here is the updated code..."), inline code Graveyard (commented-out old code), and debugging `console.log` statements.
+- [ ] Write clean, professional, and descriptive comments for complex logic, API interactions, and custom hooks. The comments must explain the *what* and *how* of the business logic, suitable for an academic code review by the supervising professors.
+
+**5. UX/UI Final Review:**
+- [ ] Conduct comprehensive testing for loading states (Skeletons/Spinners), error boundaries (handling 400/500 errors gracefully), and empty states (when lists return 0 items).
+- [ ] Polish the responsive design to ensure tables and layout wrappers behave perfectly on smaller screens.

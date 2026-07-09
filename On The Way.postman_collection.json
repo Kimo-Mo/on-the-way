@@ -1,0 +1,1261 @@
+{
+  "info": {
+    "_postman_id": "2398cc26-b04d-479e-88dc-dfb637f396ba",
+    "name": "On The Way",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43982014",
+    "_collection_link": "https://go.postman.co/collection/43982014-2398cc26-b04d-479e-88dc-dfb637f396ba?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Identity",
+      "item": [
+        {
+          "name": "Register a new user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Ali Ahmed\",\n  \"email\": \"ali.ahmed.engineer.442@gmail.com\",\n  \"password\": \"P@$$w0rd@123\",\n  \"confirmPassword\": \"P@$$w0rd@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email OTP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ali.ahmed.engineer.442@gmail.com\",\n  \"otp\": \"58174\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/verify-email",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "verify-email"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"awdali259@gmail.com\",\n  \"password\": \"P@$$w0rd@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forget Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ali.ahmed.software.engineer@gmail.com\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/forget-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "forget-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0eww}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ali.ahmed.software.engineer@gmail.com\",\n  \"otp\": \"64337\",\n  \"newPassword\": \"NewPassword123!\",\n  \"confirmNewPassword\": \"NewPassword123!\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/reset-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "reset-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Google Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"GOOGLE_OAUTH_ID_TOKEN\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/google-login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "google-login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Incidents",
+      "item": [
+        {
+          "name": "Create new Incident Report",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{supabase_service_role_api_key_0i98}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "Type",
+                  "type": "text",
+                  "uuid": "727908f7-adc6-44c8-92d2-ac2b67bcbf0c",
+                  "value": "Collision"
+                },
+                {
+                  "key": "Latitude",
+                  "type": "text",
+                  "uuid": "035e8114-00cc-47c4-a3ed-325742c605aa",
+                  "value": "30.0444"
+                },
+                {
+                  "key": "Longitude",
+                  "type": "text",
+                  "uuid": "88009597-e534-4ef9-a4ca-aff7bc151866",
+                  "value": "31.2357"
+                },
+                {
+                  "key": "LocationName",
+                  "type": "text",
+                  "uuid": "9923f749-a1f9-4b91-ad24-e8a5ec58e1d1",
+                  "value": "Tahrir Square"
+                },
+                {
+                  "key": "Description",
+                  "type": "text",
+                  "uuid": "675239d6-928c-4d13-9c13-e0aa0c4fb582",
+                  "value": "Test incident report from Postman"
+                },
+                {
+                  "key": "PhoneNumber",
+                  "type": "text",
+                  "uuid": "2aef9dac-8c3f-4d1b-bb97-ba75514ecda9",
+                  "value": "+201234567890"
+                },
+                {
+                  "key": "Image",
+                  "type": "file",
+                  "uuid": "754b81a2-d2fd-42a7-938d-8b21f17dcdc9",
+                  "src": "/home/ali/Downloads/714599553_122188370042681347_1220504956418131042_n.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/incidents/report",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "incidents",
+                "report"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Incident by Id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{supabase_service_role_api_key_0x0d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/incidents/3F3B678F",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "incidents",
+                "3F3B678F"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vote on an Incident",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0x0d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"incidentId\": \"3F3B678F\",\n  \"isUpvote\": true\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/incidents/vote",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "incidents",
+                "vote"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Assistance",
+      "item": [
+        {
+          "name": "Create Assistance Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0x0d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "Type",
+                  "type": "text",
+                  "uuid": "554d8bcb-d5e5-4512-b8b1-4e132240b851",
+                  "value": "CarBreakdown"
+                },
+                {
+                  "key": "Description",
+                  "type": "text",
+                  "uuid": "1e0c0e27-b19e-41d0-b35f-0fb442e38ec5",
+                  "value": "Engine Won't Start, smoke coming out"
+                },
+                {
+                  "key": "Address",
+                  "type": "text",
+                  "uuid": "101b558f-2e73-4bef-af68-37f4997f12e4",
+                  "value": "Cairo, Nasr City"
+                },
+                {
+                  "key": "Latitude",
+                  "type": "text",
+                  "uuid": "ddd4ac90-cef8-4b17-9cc2-ea538ba88471",
+                  "value": "30.0500"
+                },
+                {
+                  "key": "Longitude",
+                  "type": "text",
+                  "uuid": "1f857e34-ff01-4813-b672-dcbd0c166c9a",
+                  "value": "31.2400"
+                },
+                {
+                  "key": "ContactNumber",
+                  "type": "text",
+                  "uuid": "fa9b77d7-7d9a-4e23-917e-7592b1bb9dba",
+                  "value": "+201023211727"
+                },
+                {
+                  "key": "Image",
+                  "type": "file",
+                  "uuid": "bb9b871f-1c94-4ad7-b0c6-4eaf4fcdb049",
+                  "src": "/home/ali/Downloads/713984035_4500390366845593_3641382986403951584_n.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/assistance/request",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "assistance",
+                "request"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Assistance Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0x0d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/assistance/CB7D7AD0",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "assistance",
+                "CB7D7AD0"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Feed",
+      "item": [
+        {
+          "name": "Nearby Assistance",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0x0d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/feed/incidents?lat=30.0444&lon=31.2357",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "feed",
+                "incidents"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "30.0444"
+                },
+                {
+                  "key": "lon",
+                  "value": "31.2357"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Nearby Help Requests",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_0x0d}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/feed/assistance?lat=30.0444&lon=31.2357",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "feed",
+                "assistance"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "30.0444"
+                },
+                {
+                  "key": "lon",
+                  "value": "31.2357"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User History",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{supabase_service_role_api_key_0eww}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "history"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Help Offers",
+      "item": [
+        {
+          "name": "Offer Help to Assistance Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_secret_162c}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"I am nearby and have tools. I can be there in 5 minutes.\"\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/feed/assistance/CB7D7AD0/offer-help",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "feed",
+                "assistance",
+                "CB7D7AD0",
+                "offer-help"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Respond To Help Offer",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0eww}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isAccepted\": true\n}\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/feed/offers/1b571dcb-46b5-417a-a317-be3af03220c4/respond",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "feed",
+                "offers",
+                "1b571dcb-46b5-417a-a317-be3af03220c4",
+                "respond"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Complete Assistance Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{json_web_token_0eww}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/feed/assistance/CB7D7AD0/complete",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "feed",
+                "assistance",
+                "CB7D7AD0",
+                "complete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin-Dashboard",
+      "item": [
+        {
+          "name": "Identity",
+          "item": [
+            {
+              "name": "Admin Login",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"admin@ontheway.com\",\n  \"password\": \"Password@123\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Admin Logout",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{json_web_token_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/settings/logout",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "settings",
+                    "logout"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Forget Password Copy",
+              "request": {
+                "method": "GET",
+                "header": []
+              },
+              "response": []
+            },
+            {
+              "name": "Reset Password Copy",
+              "request": {
+                "method": "GET",
+                "header": []
+              },
+              "response": []
+            },
+            {
+              "name": "Google Login Copy",
+              "request": {
+                "method": "GET",
+                "header": []
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Settings",
+          "item": [
+            {
+              "name": "Update Profile Settings",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{supabase_service_role_api_key_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fullName\": \"System Administrator\",\n  \"email\": \"admin@ontheway.com\",\n  \"phoneNumber\": \"+201023211727\"\n}\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/admin/settings/profile",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "settings",
+                    "profile"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Admin Profile Settings",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{supabase_service_role_api_key_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/settings/profile",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "settings",
+                    "profile"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "Get All Users",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{json_web_token_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/users",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User Details (Admin)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{supabase_service_role_api_key_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/users/442d87e8-9cd2-4b99-9ab5-e48c46143c48",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    "442d87e8-9cd2-4b99-9ab5-e48c46143c48"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update User Status",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{json_web_token_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"newStatus\": 2\n}\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/admin/users/d81b3de0-16a8-4f49-90ca-fab2ce574c55/status",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "users",
+                    "d81b3de0-16a8-4f49-90ca-fab2ce574c55",
+                    "status"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Dashboard Statistics",
+          "item": [
+            {
+              "name": "Get Dashboard Statistics (Admin)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{supabase_service_role_api_key_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/dashboard?days=30",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "dashboard"
+                  ],
+                  "query": [
+                    {
+                      "key": "days",
+                      "value": "30"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Handle the Announcement & Notifications",
+          "item": [
+            {
+              "name": "Create Announcement  & Notification (Admin)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Maintenance Notice\",\n  \"category\": \"Roadwork\",\n  \"targetAudience\": \"All\",\n  \"content\": \"Major maintenance on the main Desert Highway tomorrow.\",\n  \"publishDate\": \"2026-07-07T08:00:00Z\",\n  \"isPublished\": true\n}\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/admin/notifications",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "notifications"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Announcements (Admin)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{json_web_token_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/notifications",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "notifications"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Announcement Details (Admin)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{supabase_service_role_api_key_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/notifications/e424b9f0-ebbd-4bec-a875-37081e0831d1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "notifications",
+                    "e424b9f0-ebbd-4bec-a875-37081e0831d1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Manage Help Requests",
+          "item": [
+            {
+              "name": "Get All Help Requests (Admin)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/help-requests",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "help-requests"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Help Requests Details",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{json_web_token_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/help-requests/CB7D7AD0",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "help-requests",
+                    "CB7D7AD0"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Manage App Users",
+          "item": [
+            {
+              "name": "Get User Report Details (Admin)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{json_web_token_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/reports/3F3B678F",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "reports",
+                    "3F3B678F"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All User Reports (Admin)",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_secret_073r}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/reports",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "reports"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "json_web_token_0x0d",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0eww",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0i98",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0x0d",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_073r",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_073r",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_073r",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_162c",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0x0d",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_0eww",
+      "secret": true
+    }
+  ]
+}

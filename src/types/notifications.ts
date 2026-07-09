@@ -9,24 +9,61 @@ export type NotificationRole = 'Driver' | 'ServiceProvider' | 'Admin';
 export type NotificationPriority = 'High' | 'Medium' | 'Low';
 export type NotificationType = 'Maintenance' | 'Policy' | 'Safety' | 'Legal' | 'Event';
 
-// ─── Core Domain Entity ──────────────────────────────────────────────────────
+// ─── List Item (GET /api/admin/notifications) ─────────────────────────────────
 
-export interface AdminNotification {
+/**
+ * Matches AnnouncementListItem from the API documentation exactly.
+ */
+export interface AnnouncementListItem {
   id: string;
   title: string;
-  message: string;
-  status: NotificationStatus;
-  targetAudience: NotificationAudience;
-  type: NotificationType;
-  priority: NotificationPriority;
-  roles: NotificationRole[]; // non-empty only when targetAudience === 'SpecificRoles'
-  deliveryChannels: NotificationDeliveryChannel[]; // always contains 'Push' and 'InApp'
-  scheduledAt: string | null; // ISO 8601; non-null only when status === 'Scheduled'
-  createdAt: string; // ISO 8601
-  updatedAt: string; // ISO 8601
+  category: string;
+  publishDate: string | null; // ISO 8601
 }
 
-// ─── API Response Shape ──────────────────────────────────────────────────────
+// ─── Details Response (GET /api/admin/notifications/{id}) ────────────────────
+
+/**
+ * Matches AnnouncementDetailsResponse from the API documentation exactly.
+ */
+export interface AnnouncementDetailsResponse {
+  id: string;
+  title: string;
+  category: string;
+  targetAudience: string;
+  content: string;
+  publishDate: string | null; // ISO 8601
+  isPublished: boolean;
+  adminName: string;
+  createdAt: string; // ISO 8601
+}
+
+// ─── Core Domain Entity (union of list + detail fields for UI use) ────────────
+
+/**
+ * AdminNotification — UI entity combining list and detail fields.
+ * All fields are optional to handle both list-item and detail shapes.
+ */
+export interface AdminNotification {
+  id?: string;
+  title?: string;
+  content?: string | null;
+  category?: string | null;
+  targetAudience?: string | null;
+  publishDate?: string | null; // ISO 8601 date-time
+  isPublished?: boolean;
+  adminName?: string;
+  // UI-extended fields (not all present in API responses):
+  status?: string;
+  type?: string;
+  priority?: string;
+  roles?: string[];
+  deliveryChannels?: string[];
+  createdAt?: string; // ISO 8601
+  updatedAt?: string; // ISO 8601
+}
+
+// ─── API Response Shapes ─────────────────────────────────────────────────────
 
 export interface NotificationsListResponse {
   data: AdminNotification[];
@@ -35,21 +72,21 @@ export interface NotificationsListResponse {
   pageSize: number;
 }
 
-// ─── Mutation Payloads ───────────────────────────────────────────────────────
+// ─── Create/Update Request (POST /api/admin/notifications) ───────────────────
 
-export interface CreateNotificationPayload {
+/**
+ * Matches CreateAnnouncementRequest from the API documentation exactly.
+ */
+export interface CreateAnnouncementRequest {
   title: string;
-  message: string;
-  targetAudience: NotificationAudience;
-  type: NotificationType;
-  priority: NotificationPriority;
-  roles: NotificationRole[];
-  deliveryChannels: NotificationDeliveryChannel[];
-  scheduledAt: string | null;
-  action: 'publish' | 'draft' | 'schedule';
+  category: string;
+  targetAudience: string;
+  content: string;
+  publishDate?: string | null; // ISO 8601 date string
+  isPublished: boolean;
 }
 
-export interface UpdateNotificationPayload extends CreateNotificationPayload {
+export interface UpdateNotificationPayload extends Partial<CreateAnnouncementRequest> {
   id: string;
 }
 
@@ -58,20 +95,21 @@ export interface UpdateNotificationPayload extends CreateNotificationPayload {
 export const createNotificationSchema = z
   .object({
     title: z.string().min(1, 'Title is required').max(100, 'Title must be 100 characters or fewer'),
-    message: z
+    content: z
       .string()
       .min(1, 'Message is required')
       .max(500, 'Message must be 500 characters or fewer'),
     targetAudience: z.enum(['Broadcast', 'SpecificRoles']),
-    type: z.enum(['Maintenance', 'Policy', 'Safety', 'Legal', 'Event'], {
-      message: 'Type is required',
+    category: z.enum(['Maintenance', 'Policy', 'Safety', 'Legal', 'Event'], {
+      message: 'Category is required',
     }),
     priority: z.enum(['High', 'Medium', 'Low'], {
       message: 'Priority is required',
     }),
     roles: z.array(z.enum(['Driver', 'ServiceProvider', 'Admin'])).optional(),
-    scheduledAt: z.string().nullable().optional(),
-    action: z.enum(['publish', 'draft', 'schedule']),
+    publishDate: z.string().nullable().optional(),
+    isPublished: z.boolean().optional(),
+    action: z.enum(['publish', 'draft', 'schedule']).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.targetAudience === 'SpecificRoles' && (!data.roles || data.roles.length === 0)) {

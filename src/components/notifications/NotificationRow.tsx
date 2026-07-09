@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Eye, Trash2, CalendarDays, Users, BellRing } from 'lucide-react';
-import type { AdminNotification } from '@/types/notifications';
+import type { AdminNotification, NotificationStatus } from '@/types/notifications';
 import { NotificationStatusBadge } from './NotificationStatusBadge';
 import { AUDIENCE_LABELS } from '@/types/notifications';
 import { Badge } from '@/components/ui/badge';
@@ -33,7 +33,7 @@ export function NotificationRow({ notification, onDelete, isDeleting }: Notifica
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <p className="font-semibold text-base truncate">{notification.title}</p>
-          <NotificationStatusBadge status={notification.status} />
+          <NotificationStatusBadge status={notification.status as NotificationStatus} />
           {notification.priority === 'High' && <Badge variant="warning">High Priority</Badge>}
           {notification.priority === 'Medium' && <Badge variant="outline">Medium Priority</Badge>}
           {notification.priority === 'Low' && <Badge variant="secondary">Low Priority</Badge>}
@@ -42,18 +42,20 @@ export function NotificationRow({ notification, onDelete, isDeleting }: Notifica
         <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
           <div className="flex items-center gap-1.5">
             <BellRing className="h-3.5 w-3.5" />
-            <span>{notification.type}</span>
+            <span>{notification.category}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <CalendarDays className="h-3.5 w-3.5" />
-            <span>{new Date(notification.createdAt).toLocaleDateString()}</span>
+            <span>
+              {notification.publishDate ? new Date(notification.publishDate).toLocaleDateString() : '—'}
+            </span>
           </div>
           <div className="flex items-center gap-1.5">
             <Users className="h-3.5 w-3.5" />
             <span className="capitalize">
               {notification.targetAudience === 'Broadcast'
                 ? 'All users'
-                : notification.roles.join(', ')}
+                : (notification.roles ?? []).join(', ')}
             </span>
           </div>
         </div>
@@ -79,7 +81,7 @@ export function NotificationRow({ notification, onDelete, isDeleting }: Notifica
               <div className="grid grid-cols-2 gap-x-6 gap-y-3">
                 <div>
                   <span className="text-xs text-muted-foreground block mb-1">Status</span>
-                  <NotificationStatusBadge status={notification.status} />
+                  <NotificationStatusBadge status={notification.status as NotificationStatus} />
                 </div>
                 <div>
                   <span className="text-xs text-muted-foreground block mb-1">Priority</span>
@@ -88,18 +90,21 @@ export function NotificationRow({ notification, onDelete, isDeleting }: Notifica
                   {notification.priority === 'Low' && <Badge variant="secondary">Low</Badge>}
                 </div>
                 <div>
-                  <span className="text-xs text-muted-foreground block mb-1">Type</span>
-                  <p className="font-medium">{notification.type}</p>
+                  <p className="text-xs text-muted-foreground mb-1">Category</p>
+                  <p className="font-medium">{notification.category}</p>
                 </div>
                 <div>
                   <span className="text-xs text-muted-foreground block mb-1">Audience</span>
-                  <p className="font-medium">{AUDIENCE_LABELS[notification.targetAudience]}</p>
+                  <p className="font-medium">
+                    {AUDIENCE_LABELS[notification.targetAudience as keyof typeof AUDIENCE_LABELS] ??
+                      notification.targetAudience}
+                  </p>
                 </div>
-                {notification.roles.length > 0 && (
+                {(notification.roles ?? []).length > 0 && (
                   <div className="col-span-2">
                     <span className="text-xs text-muted-foreground block mb-1">Roles</span>
                     <div className="flex gap-2 flex-wrap">
-                      {notification.roles.map((role) => (
+                      {(notification.roles ?? []).map((role) => (
                         <Badge key={role} variant="outline">
                           {role}
                         </Badge>
@@ -109,13 +114,17 @@ export function NotificationRow({ notification, onDelete, isDeleting }: Notifica
                 )}
                 <div>
                   <span className="text-xs text-muted-foreground block mb-1">Created</span>
-                  <p className="font-medium">{new Date(notification.createdAt).toLocaleString()}</p>
+                  <p className="font-medium">
+                    {notification.createdAt
+                      ? new Date(notification.createdAt).toLocaleString()
+                      : '—'}
+                  </p>
                 </div>
-                {notification.scheduledAt && (
+                {notification.publishDate && (
                   <div>
-                    <span className="text-xs text-muted-foreground block mb-1">Scheduled At</span>
+                    <p className="text-xs text-muted-foreground mb-1">Publish Date</p>
                     <p className="font-medium">
-                      {new Date(notification.scheduledAt).toLocaleString()}
+                      {new Date(notification.publishDate).toLocaleString()}
                     </p>
                   </div>
                 )}
@@ -126,9 +135,7 @@ export function NotificationRow({ notification, onDelete, isDeleting }: Notifica
               </div>
               <div>
                 <span className="text-xs text-muted-foreground block mb-1">Message</span>
-                <p className="bg-muted/50 p-3 rounded-md border leading-relaxed">
-                  {notification.message}
-                </p>
+                <p className="text-sm whitespace-pre-wrap">{notification.content}</p>
               </div>
             </div>
           </DialogContent>
@@ -152,7 +159,10 @@ export function NotificationRow({ notification, onDelete, isDeleting }: Notifica
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={() => onDelete(notification.id)} variant="destructive">
+              <AlertDialogAction
+                onClick={() => onDelete(notification?.id ?? '')}
+                variant="destructive"
+              >
                 Confirm
               </AlertDialogAction>
             </AlertDialogFooter>

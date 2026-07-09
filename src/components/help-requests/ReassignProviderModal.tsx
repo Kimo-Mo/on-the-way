@@ -8,13 +8,40 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { getAvailableProviders } from '@/lib/help-requests-fixtures';
-import type { HelpRequestCategory } from '@/types/help-requests';
+interface ProviderOption {
+  id: string;
+  name: string;
+  rating: number;
+  etaMinutes: number;
+}
+
+/** @mock Inline mock — no backend endpoint for listing providers by category. */
+const getAvailableProviders = (category: string): ProviderOption[] => {
+  const providersByCategory: Record<string, ProviderOption[]> = {
+    MedicalHelp: [
+      { id: 'prov_med_1', name: 'Cairo Medical Response', rating: 4.8, etaMinutes: 12 },
+      { id: 'prov_med_2', name: 'Nile First Aid', rating: 4.5, etaMinutes: 18 },
+    ],
+    CarBreakdown: [
+      { id: 'prov_tow_1', name: 'Express Towing Co.', rating: 4.6, etaMinutes: 20 },
+      { id: 'prov_tow_2', name: 'Ring Road Rescue', rating: 4.3, etaMinutes: 25 },
+    ],
+    FlatTire: [
+      { id: 'prov_fuel_1', name: 'Fuel Express Cairo', rating: 4.7, etaMinutes: 15 },
+      { id: 'prov_fuel_2', name: 'Quick Fuel Delivery', rating: 4.4, etaMinutes: 22 },
+    ],
+    Weather: [
+      { id: 'prov_rep_1', name: 'Mobile Mechanic Plus', rating: 4.5, etaMinutes: 30 },
+      { id: 'prov_rep_2', name: 'Roadside Repair Experts', rating: 4.2, etaMinutes: 35 },
+    ],
+  };
+  return providersByCategory[category] ?? [];
+};
 
 interface ReassignProviderModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  requestCategory: HelpRequestCategory;
+  requestCategory: string;
   currentProviderId: string | null;
   onReassign: (providerId: string) => void;
   isLoading: boolean;

@@ -1,57 +1,89 @@
-// ─── Role & Status ───────────────────────────────────────────────────────────
-export type UserRole = 'admin' | 'driver' | 'serviceProvider';
-export type UserStatus = 'active' | 'suspended' | 'pending';
+// ─── Enums (integer values match backend exactly) ─────────────────────────────
 
-// ─── Core User (used in the list table) ──────────────────────────────────────
+/** Backend sends status as a string: "Active" | "Suspended" | "Banned" */
+export type UserStatus = 'Active' | 'Suspended' | 'Banned';
+
+/** Backend sends role as a string: "User" | "Admin" */
+export type UserRole = 'User' | 'Admin';
+
+// ─── Numeric enum (const object, compatible with erasableSyntaxOnly) ──────────
+
+export const UserStatusEnum = {
+  Active: 1,
+  Suspended: 2,
+  Banned: 3,
+} as const;
+
+export type UserStatusEnum = (typeof UserStatusEnum)[keyof typeof UserStatusEnum];
+
+/** Maps display string → backend integer for status update requests */
+export const userStatusToNumeric: Record<UserStatus, UserStatusEnum> = {
+  Active: UserStatusEnum.Active,
+  Suspended: UserStatusEnum.Suspended,
+  Banned: UserStatusEnum.Banned,
+};
+
+export interface UpdateUserStatusRequest {
+  newStatus: UserStatusEnum;
+}
+
+// ─── Core User (GET /api/admin/users — list item) ─────────────────────────────
+
+/** Matches AdminUserListItem from the API documentation exactly. */
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: UserRole;
-  status: UserStatus;
+  role: string;
+  status: string;
   trustScore: number;
-  joinedAt: string;
-  avatarUrl?: string;
 }
 
-// ─── Activity ────────────────────────────────────────────────────────────────
-export type UserActivityType =
-  | 'reportSubmitted'
-  | 'reportVerified'
-  | 'helpRequestCreated'
-  | 'helpRequestResolved'
-  | 'profileUpdated'
-  | 'suspended'
-  | 'reactivated';
+// ─── Activity Item (inside AdminUserDetailsResponse.activityHistory) ──────────
 
 export interface UserActivity {
-  id: string;
-  userId: string;
-  type: UserActivityType;
   description: string;
-  timestamp: string;
-  relatedEntityId?: string;
-  relatedEntityRoute?: string;
+  type: string;
+  date: string; // ISO 8601
 }
 
-// ─── Full User Details (used on /users/:id) ───────────────────────────────────
-export interface UserDetails extends User {
-  phone?: string;
-  address?: string;
-  vehicleInfo?: string;
+// ─── Full User Details (GET /api/admin/users/{id}) ────────────────────────────
+
+/** Matches AdminUserDetailsResponse from the API documentation exactly. */
+export interface UserDetails {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  status: string;
+  trustScore: number;
+  joinedDate: string; // ISO 8601
   activityHistory: UserActivity[];
 }
 
-// ─── Query Params (sent to API) ───────────────────────────────────────────────
+// ─── Query Params ─────────────────────────────────────────────────────────────
+
 export interface UsersQueryParams {
   page: number;
   pageSize: number;
   search?: string;
-  role?: UserRole;
-  status?: UserStatus;
+  role?: string;
+  status?: string;
 }
 
-// ─── Paginated List Response (from API) ───────────────────────────────────────
+// ─── Paginated List Response ──────────────────────────────────────────────────
+
+/** The backend returns a plain array for GET /api/admin/users. */
+export interface UsersListResponse {
+  data: User[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+// ─── Shared PaginatedResponse helper ─────────────────────────────────────────
 export interface PaginatedResponse<T> {
   data: T[];
   total: number;
@@ -59,5 +91,3 @@ export interface PaginatedResponse<T> {
   pageSize: number;
   totalPages: number;
 }
-
-export type UsersListResponse = PaginatedResponse<User>;

@@ -1,14 +1,8 @@
 import { Link } from 'react-router';
 import type { ActivityEvent } from '@/types/dashboard';
 import { DashboardPanel } from './DashboardPanel';
-import {
-  FileText,
-  CheckCircle,
-  Building2,
-  Flag,
-  Megaphone,
-  Info,
-} from 'lucide-react';
+import { Activity, FileText, CheckCircle } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface RecentActivityProps {
   events: ActivityEvent[];
@@ -17,23 +11,18 @@ interface RecentActivityProps {
   isEmpty?: boolean;
 }
 
-const typeIcons: Record<ActivityEvent['type'], typeof FileText> = {
-  reportSubmitted: FileText,
-  reportVerified: CheckCircle,
-  providerRegistered: Building2,
-  userFlagged: Flag,
-  announcementPublished: Megaphone,
-  system: Info,
+const typeIcons: Record<ActivityEvent['type'], LucideIcon> = {
+  help: CheckCircle,
+  report: FileText,
 };
 
 const typeLabels: Record<ActivityEvent['type'], string> = {
-  reportSubmitted: 'Report submitted',
-  reportVerified: 'Report verified',
-  providerRegistered: 'Provider registered',
-  userFlagged: 'User flagged',
-  announcementPublished: 'Announcement',
-  system: 'System',
+  help: 'Help Request',
+  report: 'Report',
 };
+
+const DEFAULT_ICON: LucideIcon = Activity;
+const DEFAULT_LABEL = 'Activity';
 
 const toneStyles: Record<NonNullable<ActivityEvent['tone']>, string> = {
   default: 'border-l-border',
@@ -86,19 +75,19 @@ export const RecentActivity = ({ events, isLoading, error, isEmpty }: RecentActi
     <DashboardPanel title="Recent Activity">
       <div className="space-y-3">
         {events.slice(0, 5).map((event) => {
-          const Icon = typeIcons[event.type];
+          const Icon = typeIcons[event.type] ?? DEFAULT_ICON;
           const toneStyle = toneStyles[event.tone || 'default'];
           const timeLabel = formatRelativeTime(event.timestamp);
 
           const content = (
             <div className={`flex items-start gap-3 pl-2 border-l-2 ${toneStyle}`}>
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted">
-                <Icon className="size-4 text-muted-foreground" />
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted border border-border">
+                <Icon className="size-4" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-foreground">{event.title}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {typeLabels[event.type]} • {timeLabel}
+                  {typeLabels[event.type] ?? DEFAULT_LABEL} • {timeLabel}
                 </p>
               </div>
             </div>

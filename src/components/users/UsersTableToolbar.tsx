@@ -73,8 +73,7 @@ export const UsersTableToolbar = ({
         <SelectContent>
           <SelectItem value="all">All Roles</SelectItem>
           <SelectItem value="admin">Admin</SelectItem>
-          <SelectItem value="driver">Driver</SelectItem>
-          <SelectItem value="serviceProvider">Service Provider</SelectItem>
+          <SelectItem value="user">User</SelectItem>
         </SelectContent>
       </Select>
 
@@ -86,7 +85,7 @@ export const UsersTableToolbar = ({
           <SelectItem value="all">All Statuses</SelectItem>
           <SelectItem value="active">Active</SelectItem>
           <SelectItem value="suspended">Suspended</SelectItem>
-          <SelectItem value="pending">Pending</SelectItem>
+          <SelectItem value="banned">Banned</SelectItem>
         </SelectContent>
       </Select>
 

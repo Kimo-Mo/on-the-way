@@ -2,26 +2,22 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { useProviders, useUpdateProviderStatus } from '@/hooks/providers/useProviders';
 import {
   ProvidersToolbar,
-  ProvidersPagination,
   ProviderTableSkeleton,
   ProvidersTable,
 } from '@/components/providers';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { AlertCircle, RotateCcw } from 'lucide-react';
+import { ClientPagination } from '@/components/ui';
+import { useClientPagination } from '@/hooks/useClientPagination';
 import type {
   ProviderServiceType,
   ProviderStatus,
   UpdateProviderStatusPayload,
 } from '@/types/providers';
-import { PageHeader } from '@/components/shared';
+import { PageHeader, PageError, PageEmpty } from '@/components/shared';
+import { Building2 } from 'lucide-react';
 
 export default function ProvidersManagement() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const page = parseInt(searchParams.get('page') || '1', 10);
-  const pageSize = parseInt(searchParams.get('pageSize') || '10', 10);
   const search = searchParams.get('search') || '';
   const type = (searchParams.get('type') as ProviderServiceType | 'all') || 'all';
   const status = (searchParams.get('status') as ProviderStatus | 'all') || 'all';
@@ -35,20 +31,22 @@ export default function ProvidersManagement() {
         newParams.set(key, value);
       }
     });
-    // Reset to page 1 on filter change
-    if ('search' in updates || 'type' in updates || 'status' in updates) {
-      newParams.set('page', '1');
-    }
     setSearchParams(newParams);
   };
 
   const { data, isLoading, isError, refetch } = useProviders({
-    page,
-    pageSize,
+    page: 1,
+    pageSize: 10,
     search: search || undefined,
     type: type !== 'all' ? type : undefined,
     status: status !== 'all' ? status : undefined,
   });
+
+  const { paginatedData, currentPage, totalPages, goToPage } = useClientPagination(
+    data?.data ?? [],
+    10,
+    [search, type, status]
+  );
 
   const { mutate: updateStatus } = useUpdateProviderStatus();
 
@@ -64,8 +62,6 @@ export default function ProvidersManagement() {
     <div className="py-7">
       <PageHeader title="Service Providers" subtitle="Manage and approve service providers" />
 
-      {/* <div className="bg-card border rounded-md shadow-sm"> */}
-      {/* <div className="border-b px-6"> */}
       <ProvidersToolbar
         search={search}
         onSearchChange={(val) => updateFilters({ search: val })}
@@ -75,45 +71,38 @@ export default function ProvidersManagement() {
         onStatusChange={(val) => updateFilters({ status: val })}
         onClearFilters={() => updateFilters({ search: null, type: null, status: null })}
       />
-      {/* </div> */}
+      {isError && (
+        <PageError
+          message="Failed to load service providers. Please try again."
+          onRetry={() => refetch()}
+        />
+      )}
 
-      {isError ? (
-        <div>
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription className="flex items-center justify-between">
-              <span>Failed to load service providers. Please try again.</span>
-              <Button variant="outline" size="sm" onClick={() => refetch()}>
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Retry
-              </Button>
-            </AlertDescription>
-          </Alert>
-        </div>
-      ) : isLoading ? (
-        <div>
-          <ProviderTableSkeleton />
-        </div>
-      ) : (
+      {!isLoading && !isError && (data?.data ?? []).length === 0 && (
+        <PageEmpty
+          title="No providers found"
+          description={search || type !== 'all' || status !== 'all' ? 'Try clearing your filters' : undefined}
+          icon={Building2}
+        />
+      )}
+
+      {isLoading && (
+        <ProviderTableSkeleton />
+      )}
+
+      {!isLoading && !isError && data && data.data.length > 0 && (
         <>
           <ProvidersTable
-            providers={data?.data || []}
+            providers={paginatedData}
             onViewDetails={(id) => navigate(`/providers/${id}`)}
             onApprove={handleApprove}
             onReject={handleReject}
           />
-          {!isLoading && data && data.totalPages > 1 && (
-            <div className="border-t">
-              <ProvidersPagination
-                page={page}
-                pageSize={pageSize}
-                total={data.total}
-                totalPages={data.totalPages}
-                onPageChange={(newPage) => updateFilters({ page: newPage.toString() })}
-              />
-            </div>
-          )}
+          <ClientPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={goToPage}
+          />
         </>
       )}
     </div>

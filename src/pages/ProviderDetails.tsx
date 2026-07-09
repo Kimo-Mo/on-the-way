@@ -7,9 +7,9 @@ import {
   ProviderStatusActionDialog,
 } from '@/components/providers';
 import { canApproveProvider, getProviderStatusActionAvailability } from '@/types/providers';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { PageError } from '@/components/shared';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, RotateCcw, ArrowLeft, MapPin, Building } from 'lucide-react';
+import { AlertCircle, ArrowLeft, MapPin, Building } from 'lucide-react';
 
 export default function ProviderDetails() {
   const { id } = useParams<{ id: string }>();
@@ -20,20 +20,14 @@ export default function ProviderDetails() {
 
   if (isError) {
     return (
-      <div>
-        <Button variant="ghost" onClick={() => navigate('/providers')} className="mb-6">
+      <div className="py-7 space-y-4">
+        <Button variant="ghost" onClick={() => navigate('/providers')} className="mb-2">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Providers
         </Button>
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription className="flex items-center justify-between">
-            <span>Failed to load provider details.</span>
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
-              <RotateCcw className="mr-2 h-4 w-4" /> Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
+        <PageError
+          message="Failed to load provider details."
+          onRetry={() => refetch()}
+        />
       </div>
     );
   }

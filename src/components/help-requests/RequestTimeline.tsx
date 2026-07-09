@@ -22,7 +22,7 @@ export const RequestTimeline = ({ timeline }: RequestTimelineProps) => {
           <div className="pb-6">
             <p className="font-medium text-sm">{event.eventLabel}</p>
             <p className="text-xs text-muted-foreground">
-              {new Date(event.timestamp).toLocaleString()}
+              {event.timestamp && new Date(event.timestamp).toLocaleString()}
             </p>
             {event.description && (
               <p className="text-sm text-muted-foreground mt-1">{event.description}</p>

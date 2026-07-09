@@ -1,17 +1,19 @@
 import { useMutation } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth-store';
-// import api from '@/lib/axios';
-import type { AdminUser } from '@/types/auth';
+import api from '@/lib/axios';
+import type { ApiResponse } from '@/types/api';
+import type { LoginRequest, LoginResponse, AdminUser } from '@/types/auth';
+import { toast } from 'sonner';
 
-interface LoginResponse {
-  token: string;
-  user: AdminUser;
-  expiresIn: number;
-}
+// ─── Auth State ──────────────────────────────────────────────────────────────
 
+/**
+ * Hook that exposes the current authentication state and actions from the Zustand store.
+ */
 export const useAuth = () => {
   const user = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const login = useAuthStore((state) => state.login);
   const logout = useAuthStore((state) => state.logout);
@@ -19,37 +21,120 @@ export const useAuth = () => {
   return {
     user,
     token,
+    refreshToken,
     isAuthenticated,
     login,
     logout,
   };
 };
 
+// ─── Login ───────────────────────────────────────────────────────────────────
+
+interface AdminProfile {
+  fullName: string;
+  email: string;
+  phoneNumber: string | null;
+  role: string;
+}
+
+interface LoginResult {
+  token: string;
+  refreshToken: string;
+  user: AdminUser;
+}
+
+const getErrorMessage = (error: { message?: string } | string | null | undefined): string => {
+  if (typeof error === 'string') {
+    return error;
+  }
+  return error?.message ?? 'Login failed.';
+};
+
+const extractLoginTokens = (
+  response: ApiResponse<LoginResponse>
+): { token: string; refreshToken: string } => {
+  if (!response.isSuccess || response.data === null) {
+    throw new Error(getErrorMessage(response.error));
+  }
+
+  const { token, refreshToken } = response.data;
+  if (!token || !refreshToken) {
+    throw new Error('Login failed: Missing authentication tokens from server.');
+  }
+
+  return { token, refreshToken };
+};
+
+const fetchAdminUser = async (credentials: LoginRequest, token: string): Promise<AdminUser> => {
+  try {
+    const response = await api.get<ApiResponse<AdminProfile>>('/admin/settings/profile', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const profile = response.data.data;
+
+    if (response.data.isSuccess && profile) {
+      return {
+        id: 'admin-1',
+        email: profile.email,
+        name: profile.fullName,
+        role: profile.role,
+        status: 'Active',
+      };
+    }
+  } catch {
+    // Fall back to deriving the user from the provided credentials.
+  }
+
+  return {
+    id: 'admin-1',
+    email: credentials.email,
+    name: credentials.email.split('@')[0],
+    role: 'Admin',
+    status: 'Active',
+  };
+};
+
+/**
+ * Mutation hook for logging in via POST /api/auth/login.
+ * Since the login endpoint only returns tokens (no user object), we fetch the
+ * admin profile immediately after login to get user details.
+ */
 export const useLogin = () => {
-  const { login } = useAuth();
+  const login = useAuthStore((state) => state.login);
 
   return useMutation({
-    mutationFn: async (/*credentials: Record<string, string>*/) => {
-      // This is a placeholder for the actual API call to the backend for user authentication.
-      // const { data } = await api.post<LoginResponse>('/api/auth/login', credentials);
+    mutationFn: async (credentials: LoginRequest): Promise<LoginResult> => {
+      const response = await api.post<ApiResponse<LoginResponse>>('/auth/login', credentials);
+      const { token, refreshToken } = extractLoginTokens(response.data);
+      const user = await fetchAdminUser(credentials, token);
 
-      // Mocked response for testing purposes, should be replaced with actual API call in production
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const data: LoginResponse = {
-        token: 'mocked-token',
-        user: {
-          id: '1',
-          email: 'admin@ontheway.com',
-          name: 'Admin User',
-          role: 'admin',
-          status: 'active',
-        },
-        expiresIn: 28800,
-      };
-      return data;
+      return { token, refreshToken, user };
     },
-    onSuccess: (data) => {
-      login({ token: data.token, user: data.user, expiresIn: data.expiresIn });
+    onSuccess: ({ token, refreshToken, user }) => {
+      login({ token, refreshToken, user });
+      toast.success('Login successful');
+    },
+  });
+};
+
+// ─── Logout ──────────────────────────────────────────────────────────────────
+
+/**
+ * Mutation hook for logging out via POST /api/admin/settings/logout.
+ * Makes a best-effort server-side logout, then always clears local auth state.
+ */
+export const useLogout = () => {
+  const { logout } = useAuth();
+
+  return useMutation({
+    mutationFn: async () => {
+      await api.post('/admin/settings/logout');
+    },
+    onSettled: () => {
+      logout();
+    },
+    onError: () => {
+      logout();
     },
   });
 };

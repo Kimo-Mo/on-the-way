@@ -1,11 +1,12 @@
 import { Card, CardContent } from '@/components/ui/card';
 
 interface ReportImageGalleryProps {
-  imageUrls: string[];
+  /** Backend returns a single nullable imageUrl string */
+  imageUrl: string | null;
 }
 
-export const ReportImageGallery = ({ imageUrls }: ReportImageGalleryProps) => {
-  if (imageUrls.length === 0) {
+export const ReportImageGallery = ({ imageUrl }: ReportImageGalleryProps) => {
+  if (!imageUrl) {
     return (
       <Card className="border-dashed">
         <CardContent className="flex items-center justify-center h-64 text-muted-foreground">
@@ -16,14 +17,16 @@ export const ReportImageGallery = ({ imageUrls }: ReportImageGalleryProps) => {
   }
 
   return (
-    <div className="grid gap-3 grid-cols-2 sm:grid-cols-3">
-      {imageUrls.map((url, index) => (
-        <Card key={index} className="overflow-hidden">
-          <CardContent className="p-0">
-            <img src={url} alt={`Report image ${index + 1}`} className="w-full h-48 object-cover" />
-          </CardContent>
-        </Card>
-      ))}
+    <div>
+      <img
+        src={
+          import.meta.env.VITE_API_BASE_URL?.endsWith('/api')
+            ? import.meta.env.VITE_API_BASE_URL?.slice(0, -4) + imageUrl
+            : import.meta.env.VITE_API_BASE_URL + imageUrl
+        }
+        alt="Report image"
+        className="w-full h-64 object-contain"
+      />
     </div>
   );
 };

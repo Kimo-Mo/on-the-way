@@ -30,8 +30,7 @@ export const UsersPagination = ({
           size="sm"
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
-          aria-label="Previous page"
-        >
+          aria-label="Previous page">
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <span className="text-sm px-2">
@@ -42,8 +41,7 @@ export const UsersPagination = ({
           size="sm"
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
-          aria-label="Next page"
-        >
+          aria-label="Next page">
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>

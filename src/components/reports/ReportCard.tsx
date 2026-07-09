@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, ThumbsUp, ThumbsDown, Eye } from 'lucide-react';
+import { MapPin, ThumbsUp, ThumbsDown, Eye, FileText } from 'lucide-react';
 import type { Report } from '@/types/reports';
 import { ReportStatusBadge } from './ReportStatusBadge';
 import { ObstacleTypeBadge } from './ObstacleTypeBadge';
@@ -20,39 +20,45 @@ export const ReportCard = ({ report, onViewDetails }: ReportCardProps) => {
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow">
+    <Card className="overflow-hidden border border-transparent hover:border hover:border-primary transition-all duration-300 py-0">
       <CardContent className="p-0 flex flex-col sm:flex-row items-stretch">
         <div className="bg-muted/30 w-full sm:w-24 flex items-center justify-center p-4 border-b sm:border-b-0 sm:border-r">
           <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
-            <MapPin className="h-5 w-5 text-muted-foreground" />
+            <FileText className="h-5 w-5 text-muted-foreground" />
           </div>
         </div>
         <div className="flex-1 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-2 flex-1 min-w-0">
             <div className="flex items-center gap-3">
-              <h3 className="text-lg font-semibold truncate">{report.title}</h3>
+              {/* Backend returns `title` */}
+              <h3 className="text-lg font-semibold truncate overflow-hidden max-w-xs">{report.title}</h3>
+              {/* Backend returns `status` as a string e.g. "Open" */}
               <ReportStatusBadge status={report.status} />
             </div>
             <div className="flex items-center gap-3 text-sm text-muted-foreground flex-wrap">
               <div className="flex items-center gap-1.5 min-w-0">
                 <MapPin className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate max-w-50 sm:max-w-xs">{report.location}</span>
+                {/* Backend returns `address` (not `location`) */}
+                <span className="truncate max-w-50 sm:max-w-xs">{report.address}</span>
               </div>
               <span className="text-muted-foreground/50">•</span>
-              <ObstacleTypeBadge type={report.obstacleType} />
+              {/* Backend returns `type` as a string e.g. "Collision" */}
+              <ObstacleTypeBadge type={report.type} />
               <span className="text-muted-foreground/50">•</span>
-              <span>{formatDate(report.submittedAt)}</span>
+              {/* Backend returns `createdAt` (not `submittedAt`) */}
+              <span>{formatDate(report.createdAt)}</span>
             </div>
           </div>
           <div className="flex items-center gap-5 shrink-0 sm:ml-auto">
             <div className="flex items-center gap-4">
+              {/* Backend returns flat `upvotes` / `downvotes` (not nested under `votes`) */}
               <div className="flex items-center gap-1.5 text-success font-medium text-sm">
                 <ThumbsUp className="h-4 w-4" />
-                <span>{report.votes.upvotes}</span>
+                <span>{report.upvotes}</span>
               </div>
               <div className="flex items-center gap-1.5 text-destructive font-medium text-sm">
                 <ThumbsDown className="h-4 w-4" />
-                <span>{report.votes.downvotes}</span>
+                <span>{report.downvotes}</span>
               </div>
             </div>
             <Button

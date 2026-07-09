@@ -48,13 +48,13 @@ export const ContactUserModal = ({ open, onOpenChange, user }: ContactUserModalP
           <div className="flex items-center justify-between py-3 border-b">
             <div>
               <p className="text-xs text-muted-foreground">Name</p>
-              <p className="text-sm font-medium">{user.fullName}</p>
+              <p className="text-sm font-medium">{user.name}</p>
             </div>
             <Button
               variant="ghost"
               size="icon"
               className="h-8 w-8"
-              onClick={() => handleCopy(user.fullName, 'name')}
+              onClick={() => handleCopy(user.name ?? '', 'name')}
               aria-label="Copy name"
             >
               {copied === 'name' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}

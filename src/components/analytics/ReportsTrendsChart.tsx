@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
-import type { ReportsTrendPoint } from '@/types/analytics';
+import type { ChartPoint } from '@/types/dashboard';
 
 interface ReportsTrendsChartProps {
-  data: ReportsTrendPoint[];
+  data: ChartPoint[];
   isLoading: boolean;
 }
 
@@ -38,7 +38,7 @@ export function ReportsTrendsChart({ data, isLoading }: ReportsTrendsChartProps)
               height: '100%',
             }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
+            <XAxis dataKey="label" />
             <YAxis />
             <Tooltip
               contentStyle={{
@@ -50,16 +50,10 @@ export function ReportsTrendsChart({ data, isLoading }: ReportsTrendsChartProps)
             <Legend />
             <Area
               type="monotone"
-              dataKey="reports"
+              dataKey="value"
+              name="Reports"
               stroke="#8884d8"
               fill="#8884d8"
-              fillOpacity={0.3}
-            />
-            <Area
-              type="monotone"
-              dataKey="resolved"
-              stroke="#82ca9d"
-              fill="#82ca9d"
               fillOpacity={0.3}
             />
           </AreaChart>

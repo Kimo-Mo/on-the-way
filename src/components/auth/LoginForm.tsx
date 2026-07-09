@@ -11,7 +11,7 @@ import { Input } from '../ui/input';
 import { useState } from 'react';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
@@ -27,12 +27,12 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = async (/*values: z.infer<typeof loginSchema>*/) => {
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     try {
-      await login(/*values*/);
+      await login(values);
     } catch (error) {
-      const err = error as AxiosError<{ message?: string }>;
-      const message = err.response?.data?.message || 'Login failed';
+      const err = error as AxiosError<{ error?: string }>;
+      const message = err.response?.data?.error || 'Login failed. Please try again.';
       form.setError('root', { message });
     }
   };

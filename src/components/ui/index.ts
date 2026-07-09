@@ -19,3 +19,4 @@ export * from './sonner';
 export * from './switch';
 export * from './table';
 export * from './textarea';
+export * from './ClientPagination';

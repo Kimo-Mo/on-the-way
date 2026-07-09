@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Eye, Stethoscope, Truck, Fuel, Wrench } from 'lucide-react';
+import { MapPin, Eye, Stethoscope, Truck, Fuel, Wrench, CloudRain } from 'lucide-react';
 import type { HelpRequest } from '@/types/help-requests';
 import { HelpRequestStatusBadge } from './HelpRequestStatusBadge';
 import { HelpRequestCategoryBadge } from './HelpRequestCategoryBadge';
@@ -10,14 +10,24 @@ interface HelpRequestCardProps {
   onViewDetails: (id: string) => void;
 }
 
-const categoryIconMap = {
+const typeIconMap: Record<string, typeof Truck> = {
+  MedicalHelp: Stethoscope,
+  CarBreakdown: Truck,
+  FlatTire: Fuel,
+  Weather: CloudRain,
+  // Legacy aliases
   Medical: Stethoscope,
   Towing: Truck,
   Fuel: Fuel,
   Repair: Wrench,
-} as const;
+};
 
-const categoryBgMap: Record<string, string> = {
+const typeBgMap: Record<string, string> = {
+  MedicalHelp: 'bg-destructive/5 text-destructive',
+  CarBreakdown: 'bg-primary/5 text-primary',
+  FlatTire: 'bg-warning/5 text-warning',
+  Weather: 'bg-info/5 text-info',
+  // Legacy aliases
   Medical: 'bg-destructive/5 text-destructive',
   Towing: 'bg-primary/5 text-primary',
   Fuel: 'bg-warning/5 text-warning',
@@ -33,8 +43,9 @@ function getInitials(name: string): string {
 }
 
 export const HelpRequestCard = ({ request, onViewDetails }: HelpRequestCardProps) => {
-  const Icon = categoryIconMap[request.category];
-  const bgClass = categoryBgMap[request.category];
+  // Backend returns `type` (not `category`)
+  const Icon = typeIconMap[request.type] ?? Truck;
+  const bgClass = typeBgMap[request.type] ?? 'bg-primary/5 text-primary';
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
@@ -45,37 +56,30 @@ export const HelpRequestCard = ({ request, onViewDetails }: HelpRequestCardProps
         <div className="flex-1 flex sm:items-center justify-between gap-4">
           <div className="space-y-2 flex-1">
             <div className="flex items-center gap-3 flex-wrap">
-              <HelpRequestCategoryBadge category={request.category} />
+              {/* Backend returns `type` e.g. "FlatTire" */}
+              <HelpRequestCategoryBadge category={request.type} />
+              {/* Backend returns `status` e.g. "Pending" */}
               <HelpRequestStatusBadge status={request.status} />
             </div>
             <div className="flex items-center gap-2 text-sm">
-              {request.user.avatarUrl ? (
-                <img
-                  src={request.user.avatarUrl}
-                  alt={request.user.fullName}
-                  className="size-6 rounded-full object-cover"
-                />
-              ) : (
-                <div className="size-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
-                  {getInitials(request.user.fullName)}
-                </div>
-              )}
-              <span className="font-medium">{request.user.fullName}</span>
+              {/* Backend returns `userName` (not nested user.fullName) */}
+              <div className="size-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                {getInitials(request.userName)}
+              </div>
+              <span className="font-medium">{request.userName}</span>
             </div>
             <div className="flex gap-3 flex-wrap">
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <MapPin className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate max-w-50 sm:max-w-xs">{request.locationText}</span>
-              </div>
-              <div className="text-sm text-primary">
-                {request.provider ? request.provider.name : 'Unassigned'}
+                {/* Backend returns `address` (not `locationText`) */}
+                <span className="truncate max-w-50 sm:max-w-xs">{request.address}</span>
               </div>
             </div>
           </div>
           <div className="flex items-center shrink-0 sm:ml-auto">
             <Button
               onClick={() => onViewDetails(request.id)}
-              aria-label={`View ${request.category} request from ${request.user.fullName}`}>
+              aria-label={`View ${request.type} request from ${request.userName}`}>
               <Eye className="mr-1 h-4 w-4" />
               View
             </Button>

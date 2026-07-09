@@ -1,17 +1,15 @@
 import { useParams, useNavigate } from 'react-router';
-import { ChevronLeft } from 'lucide-react';
+import { Calendar, ChevronLeft, Image, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useReportDetails } from '@/hooks/reports/useReports';
 import {
-  FlagUserDialog,
   ObstacleTypeBadge,
   RemoveReportDialog,
   ReportImageGallery,
   ReportMap,
   ReportMetaSidebar,
-  ReportStatusBadge,
 } from '@/components/reports';
 import { useApproveReport, useMarkUrgent } from '@/hooks/reports/useReports';
 
@@ -37,10 +35,6 @@ const ReportDetails = () => {
 
   const handleRemoveSuccess = () => {
     navigate('/reports');
-  };
-
-  const handleFlagSuccess = () => {
-    // No navigation, UI updates via query invalidation
   };
 
   if (isLoading) {
@@ -98,10 +92,6 @@ const ReportDetails = () => {
     });
   };
 
-  const isRemoved = report.status === 'removed';
-  const canApprove = report.status === 'pending' || report.status === 'urgent';
-  const canMarkUrgent = report.status === 'pending';
-
   return (
     <section className="py-7 space-y-6">
       <div className="flex items-center justify-between">
@@ -109,7 +99,6 @@ const ReportDetails = () => {
           <ChevronLeft className="h-4 w-4" />
           Back to Reports
         </Button>
-        <ReportStatusBadge status={report.status} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
@@ -118,15 +107,15 @@ const ReportDetails = () => {
             <CardHeader className="pb-4 border-b">
               <div className="space-y-1">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <ObstacleTypeBadge type={report.obstacleType} />
+                  <ObstacleTypeBadge type={report.type} />
                   <span className="text-sm text-muted-foreground flex items-center gap-1">
-                    <span className="h-4 w-4 inline-block">📅</span>
-                    {formatDate(report.submittedAt)} {formatTime(report.submittedAt)}
+                    <Calendar className="size-4" />
+                    {formatDate(report.createdAt)} {formatTime(report.createdAt)}
                   </span>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent>
               <h3 className="text-lg font-bold mb-3">Report Description</h3>
               <p className="text-sm leading-relaxed text-muted-foreground">{report.description}</p>
             </CardContent>
@@ -135,68 +124,60 @@ const ReportDetails = () => {
           <Card>
             <CardHeader className="pb-4 border-b">
               <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <span className="h-4 w-4 inline-block">🖼️</span>
+                <Image className="size-4" />
                 Attached Images
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
-              <ReportImageGallery imageUrls={report.imageUrls} />
+            <CardContent>
+              <ReportImageGallery imageUrl={report.imageUrl} />
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-4 border-b">
               <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                <span className="h-4 w-4 inline-block">🗺️</span>
+                <MapPin className="size-4" />
                 Location on Map
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
-              <ReportMap gpsCoordinates={report.gpsCoordinates} location={report.location} />
+            <CardContent>
+              <ReportMap
+                latitude={report.latitude}
+                longitude={report.longitude}
+                address={report.address}
+              />
             </CardContent>
           </Card>
         </div>
 
         <ReportMetaSidebar
-          submitter={report.submitter}
-          gpsCoordinates={report.gpsCoordinates}
-          votes={report.votes}
-          location={report.location}
+          submittedBy={report.submittedBy}
+          latitude={report.latitude}
+          longitude={report.longitude}
+          upvotes={report.upvotes}
+          downvotes={report.downvotes}
+          address={report.address}
           actions={
             <>
-              {canApprove && (
-                <Button
-                  className="w-full bg-success hover:bg-success/80 font-semibold"
-                  onClick={handleApprove}
-                  disabled={approveMutation.isPending}
-                  aria-label="Approve this report">
-                  {approveMutation.isPending ? 'Approving...' : 'Approve Report'}
-                </Button>
-              )}
-              {canMarkUrgent && (
-                <Button
-                  className="w-full bg-warning hover:bg-warning/80 font-semibold"
-                  onClick={handleMarkUrgent}
-                  disabled={markUrgentMutation.isPending}
-                  aria-label="Mark this report as urgent">
-                  {markUrgentMutation.isPending ? 'Marking...' : 'Mark as Urgent'}
-                </Button>
-              )}
-              {!isRemoved && (
-                <RemoveReportDialog
-                  reportId={report.id}
-                  onSuccess={handleRemoveSuccess}
-                  className="w-full bg-destructive hover:bg-destructive/80 text-white font-semibold"
-                />
-              )}
-              {!report.submitter.isDeleted && !isRemoved && (
-                <FlagUserDialog
-                  reportId={report.id}
-                  submitterName={report.submitter.name}
-                  onSuccess={handleFlagSuccess}
-                  className="w-full bg-foreground hover:bg-foreground/90 text-white hover:text-white font-semibold"
-                />
-              )}
+              <Button
+                className="w-full bg-success hover:bg-success/80 font-semibold"
+                onClick={handleApprove}
+                disabled={approveMutation.isPending}
+                aria-label="Approve this report">
+                {approveMutation.isPending ? 'Approving...' : 'Approve Report'}
+              </Button>
+              <Button
+                className="w-full bg-warning hover:bg-warning/80 font-semibold"
+                onClick={handleMarkUrgent}
+                disabled={markUrgentMutation.isPending}
+                aria-label="Mark this report as urgent">
+                {markUrgentMutation.isPending ? 'Marking...' : 'Mark as Urgent'}
+              </Button>
+              <RemoveReportDialog
+                reportId={report.id}
+                onSuccess={handleRemoveSuccess}
+                className="w-full bg-destructive hover:bg-destructive/80 text-white font-semibold"
+              />
             </>
           }
         />

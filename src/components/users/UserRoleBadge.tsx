@@ -1,26 +1,29 @@
 import { Badge } from '@/components/ui/badge';
-import type { UserRole } from '@/types/users';
 
 interface UserRoleBadgeProps {
-  role: UserRole;
+  role: string;
 }
 
-const roleLabels: Record<UserRole, string> = {
+const roleLabels: Record<string, string> = {
+  Admin: 'Admin',
+  User: 'User',
+  // Legacy labels kept for backward compatibility
   admin: 'Admin',
   driver: 'Driver',
   serviceProvider: 'Service Provider',
 };
 
-const roleVariants = {
+const roleVariants: Record<string, 'default' | 'outline' | 'secondary'> = {
+  Admin: 'default',
+  User: 'outline',
+  // Legacy
   admin: 'default',
   driver: 'outline',
   serviceProvider: 'secondary',
-} as const satisfies Record<UserRole, 'default' | 'outline' | 'secondary'>;
+};
 
 export const UserRoleBadge = ({ role }: UserRoleBadgeProps) => {
-  return (
-    <Badge variant={roleVariants[role]}>
-      {roleLabels[role]}
-    </Badge>
-  );
+  const label = roleLabels[role] ?? role;
+  const variant = roleVariants[role] ?? 'outline';
+  return <Badge variant={variant}>{label}</Badge>;
 };

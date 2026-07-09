@@ -2,11 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { Phone, CheckCircle, RefreshCw, XCircle } from 'lucide-react';
-import type { HelpRequest } from '@/types/help-requests';
+import type { HelpRequest, HelpRequestDetails } from '@/types/help-requests';
 import { TERMINAL_STATUSES } from '@/types/help-requests';
 
 interface ActionPanelProps {
-  request: HelpRequest;
+  request: HelpRequest | HelpRequestDetails;
   onMarkCompleted: () => void;
   onCancelRequest: () => void;
   onReassignProvider: () => void;
@@ -24,7 +24,7 @@ export const ActionPanel = ({
   isUpdatingStatus,
   isReassigning,
 }: ActionPanelProps) => {
-  const isTerminal = TERMINAL_STATUSES.includes(request.status);
+  const isTerminal = request.status ? TERMINAL_STATUSES.includes(request.status) : false;
 
   return (
     <Card>

@@ -3,8 +3,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export const ReportCardSkeleton = () => {
   return (
-    <Card>
-      <CardContent className="space-y-3 p-5 flex flex-col sm:flex-row items-stretch">
+    <Card className='py-0'>
+      <CardContent className="space-y-3 p-0 flex flex-col sm:flex-row items-stretch">
         <div className="bg-muted/30 w-full sm:w-24 flex items-center justify-center p-4 border-b sm:border-b-0 sm:border-r">
           <Skeleton className="h-8 w-8 rounded-full" />
         </div>

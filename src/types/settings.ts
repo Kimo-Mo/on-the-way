@@ -1,12 +1,27 @@
-export type AdminRole = 'Administrator';
+// ─── Admin Profile (GET /api/admin/settings/profile) ─────────────────────────
 
+/**
+ * Matches ProfileSettingsResponse from the API documentation exactly.
+ * Note: the backend returns `fullName` (not `name`).
+ */
 export interface AdminProfile {
-  id: string;
   fullName: string;
   email: string;
-  phoneNumber: string;
-  role: AdminRole;
+  phoneNumber: string | null;
+  role: string;
 }
+
+// ─── Update Profile (PUT /api/admin/settings/profile) ────────────────────────
+
+export interface UpdateProfileRequest {
+  fullName: string;
+  email: string;
+  phoneNumber?: string | null;
+}
+
+// ─── Mock-only settings (no backend endpoints yet) ────────────────────────────
+
+export type AdminRole = string;
 
 export interface NotificationPreferences {
   emailNotifications: boolean;

@@ -1,107 +1,97 @@
 import api from '@/lib/axios';
-import { dashboardFixtures } from '@/lib/dashboard-fixtures';
-import type { DashboardOverview, FlaggedContentItem } from '@/types/dashboard';
+import type { ApiResponse } from '@/types/api';
+import type { DashboardAnalyticsResponse } from '@/types/dashboard';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
-const DASHBOARD_QUERY_KEY = ['dashboard', 'overview'];
+// ─── Fetch Functions ─────────────────────────────────────────────────────────
 
-export const fetchDashboardOverview = async (): Promise<DashboardOverview> => {
-  try {
-    const { data } = await api.get<DashboardOverview>('/admin/dashboard/overview');
-    return data;
-  } catch (error) {
-    console.warn('[dashboard] API unavailable, using fixture data:', error);
-    return dashboardFixtures;
-  }
-};
-
-export const approveFlaggedContent = async (id: string): Promise<FlaggedContentItem> => {
-  const { data } = await api.post<FlaggedContentItem>(
-    `/admin/dashboard/flagged-content/${id}/approve`
-  );
-  return data;
-};
-
-export const removeFlaggedContent = async (id: string): Promise<FlaggedContentItem> => {
-  const { data } = await api.post<FlaggedContentItem>(
-    `/admin/dashboard/flagged-content/${id}/remove`
-  );
-  return data;
-};
-
-export const flagRelatedUser = async (id: string): Promise<FlaggedContentItem> => {
-  const { data } = await api.post<FlaggedContentItem>(
-    `/admin/dashboard/flagged-content/${id}/flag-user`
-  );
-  return data;
-};
-
-export const useDashboardOverview = () => {
-  const query = useQuery({
-    queryKey: DASHBOARD_QUERY_KEY,
-    queryFn: fetchDashboardOverview,
-    refetchInterval: 5 * 60 * 1000,
-    staleTime: 1000,
-    retry: false,
+/**
+ * Fetches the dashboard analytics from GET /api/admin/dashboard.
+ * Backend wraps the response in ApiResponse<DashboardAnalyticsResponse>.
+ *
+ * @param params - Optional query params, e.g. { days: 30 }.
+ * @returns DashboardAnalyticsResponse.
+ */
+export const fetchDashboardOverview = async (params?: {
+  days?: number;
+}): Promise<DashboardAnalyticsResponse> => {
+  const response = await api.get<ApiResponse<DashboardAnalyticsResponse>>('/admin/dashboard', {
+    params,
   });
+  const envelope = response.data;
 
+  if (!envelope.isSuccess || envelope.data === null) {
+    throw new Error(
+      typeof envelope.error === 'string'
+        ? envelope.error
+        : (envelope.error?.message ?? 'Failed to fetch dashboard data.')
+    );
+  }
+
+  return envelope.data;
+};
+
+// ─── Query Keys ──────────────────────────────────────────────────────────────
+
+const DASHBOARD_QUERY_KEY = (params?: { days?: number }) =>
+  ['dashboard', 'overview', params] as const;
+
+// ─── Query + Mutation Hooks ──────────────────────────────────────────────────
+
+/**
+ * Unified hook for Dashboard.tsx that provides the dashboard overview query
+ * plus three moderation-related mutations (approve, remove, flag).
+ * The dashboard refetches every 5 minutes to stay fresh.
+ */
+export const useDashboardOverview = (params?: { days?: number }) => {
   const queryClient = useQueryClient();
 
-  const approveMutation = useMutation({
-    mutationFn: approveFlaggedContent,
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: DASHBOARD_QUERY_KEY });
-      const previous = queryClient.getQueryData<DashboardOverview>(DASHBOARD_QUERY_KEY);
-      return { previous };
-    },
-    onError: (_err, _id, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(DASHBOARD_QUERY_KEY, context.previous);
-      }
-    },
+  const query = useQuery({
+    queryKey: DASHBOARD_QUERY_KEY(params),
+    queryFn: () => fetchDashboardOverview(params),
+    refetchInterval: 5 * 60 * 1000,
+    staleTime: 60_000,
+    retry: 1,
+  });
+
+  const approveFlaggedContent = useMutation({
+    mutationFn: (id: string) => api.post(`/admin/moderation/flagged/${id}/approve`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: DASHBOARD_QUERY_KEY });
+      toast.success('Content approved.');
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_QUERY_KEY(params) });
+    },
+    onError: () => {
+      toast.error('Failed to approve content. Please try again.');
     },
   });
 
-  const removeMutation = useMutation({
-    mutationFn: removeFlaggedContent,
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: DASHBOARD_QUERY_KEY });
-      const previous = queryClient.getQueryData<DashboardOverview>(DASHBOARD_QUERY_KEY);
-      return { previous };
-    },
-    onError: (_err, _id, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(DASHBOARD_QUERY_KEY, context.previous);
-      }
-    },
+  const removeFlaggedContent = useMutation({
+    mutationFn: (id: string) => api.post(`/admin/moderation/flagged/${id}/remove`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: DASHBOARD_QUERY_KEY });
+      toast.success('Content removed.');
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_QUERY_KEY(params) });
+    },
+    onError: () => {
+      toast.error('Failed to remove content. Please try again.');
     },
   });
 
-  const flagUserMutation = useMutation({
-    mutationFn: flagRelatedUser,
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: DASHBOARD_QUERY_KEY });
-      const previous = queryClient.getQueryData<DashboardOverview>(DASHBOARD_QUERY_KEY);
-      return { previous };
-    },
-    onError: (_err, _id, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(DASHBOARD_QUERY_KEY, context.previous);
-      }
-    },
+  const flagRelatedUser = useMutation({
+    mutationFn: (id: string) => api.post(`/admin/moderation/flagged/${id}/flag-user`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: DASHBOARD_QUERY_KEY });
+      toast.success('User flagged for moderation review.');
+      queryClient.invalidateQueries({ queryKey: DASHBOARD_QUERY_KEY(params) });
+    },
+    onError: () => {
+      toast.error('Failed to flag user. Please try again.');
     },
   });
 
   return {
     ...query,
-    approveFlaggedContent: approveMutation,
-    removeFlaggedContent: removeMutation,
-    flagRelatedUser: flagUserMutation,
+    approveFlaggedContent,
+    removeFlaggedContent,
+    flagRelatedUser,
   };
 };

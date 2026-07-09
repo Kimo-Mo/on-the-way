@@ -1,29 +1,35 @@
 import { useSearchParams, useNavigate } from 'react-router';
-import { PageHeader } from '@/components/shared';
-import { Alert, AlertDescription, Button } from '@/components/ui';
-import { UsersTable, UsersTableToolbar, UsersPagination } from '@/components/users';
+import { PageHeader, PageError, PageEmpty, TableSkeleton } from '@/components/shared';
+import { UsersTable, UsersTableToolbar } from '@/components/users';
+import { ClientPagination } from '@/components/ui';
+import { useClientPagination } from '@/hooks/useClientPagination';
 import { useUsers } from '@/hooks/users/useUsers';
 import type { UserRole, UsersQueryParams, UserStatus } from '@/types/users';
+import { Users } from 'lucide-react';
 
 const UsersManagement = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const page = Number(searchParams.get('page') ?? '1');
-  const pageSize = Number(searchParams.get('pageSize') ?? '10');
   const search = searchParams.get('search') ?? '';
   const role = searchParams.get('role') ?? '';
   const status = searchParams.get('status') ?? '';
 
   const queryParams: UsersQueryParams = {
-    page,
-    pageSize,
+    page: 1,
+    pageSize: 10,
     search: search || undefined,
     role: (role as UserRole) || undefined,
     status: (status as UserStatus) || undefined,
   };
 
   const { data, isLoading, isError, refetch } = useUsers(queryParams);
+
+  const { paginatedData, currentPage, totalPages, goToPage } = useClientPagination(
+    data?.data ?? [],
+    10,
+    [search, role, status]
+  );
   const isFiltered = !!(search || role || status);
 
   const handleSearchChange = (value: string) => {
@@ -31,7 +37,6 @@ const UsersManagement = () => {
       const next = new URLSearchParams(prev);
       if (value) next.set('search', value);
       else next.delete('search');
-      next.set('page', '1');
       return next;
     });
   };
@@ -41,7 +46,6 @@ const UsersManagement = () => {
       const next = new URLSearchParams(prev);
       if (value && value !== 'all') next.set('role', value);
       else next.delete('role');
-      next.set('page', '1');
       return next;
     });
   };
@@ -51,21 +55,12 @@ const UsersManagement = () => {
       const next = new URLSearchParams(prev);
       if (value && value !== 'all') next.set('status', value);
       else next.delete('status');
-      next.set('page', '1');
       return next;
     });
   };
 
   const handleClearFilters = () => {
-    setSearchParams(new URLSearchParams({ page: '1' }));
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.set('page', String(newPage));
-      return next;
-    });
+    setSearchParams(new URLSearchParams());
   };
 
   const handleViewDetails = (userId: string) => {
@@ -77,14 +72,15 @@ const UsersManagement = () => {
       <PageHeader title="Users Management" subtitle="Manage and monitor all system users" />
 
       {isError && (
-        <Alert variant="destructive">
-          <AlertDescription className="flex items-center justify-between">
-            <span>Failed to load users. Please try again.</span>
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
-              Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
+        <PageError message="Failed to load users. Please try again." onRetry={() => refetch()} />
+      )}
+
+      {!isLoading && !isError && (data?.data ?? []).length === 0 && (
+        <PageEmpty
+          title="No users found"
+          description={isFiltered ? 'Try clearing your filters' : undefined}
+          icon={Users}
+        />
       )}
 
       <UsersTableToolbar
@@ -98,20 +94,18 @@ const UsersManagement = () => {
         isFiltered={isFiltered}
       />
 
-      <UsersTable
-        users={data?.data ?? []}
-        isLoading={isLoading}
-        onViewDetails={handleViewDetails}
-      />
+      {isLoading && <TableSkeleton columns={6} />}
 
-      {!isLoading && data && data.totalPages > 1 && (
-        <UsersPagination
-          page={data.page}
-          totalPages={data.totalPages}
-          total={data.total}
-          pageSize={data.pageSize}
-          onPageChange={handlePageChange}
-        />
+      {!isLoading && !isError && (data?.data ?? []).length > 0 && (
+        <>
+          <UsersTable users={paginatedData} onViewDetails={handleViewDetails} />
+
+          <ClientPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={goToPage}
+          />
+        </>
       )}
     </section>
   );

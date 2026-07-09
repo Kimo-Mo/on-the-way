@@ -21,20 +21,18 @@ export type {
   UserStatus,
   User,
   UserActivity,
-  UserActivityType,
   UserDetails,
   UsersQueryParams,
   PaginatedResponse,
   UsersListResponse,
+  UpdateUserStatusRequest,
 } from './users';
 
+export { UserStatusEnum, userStatusToNumeric } from './users';
+
 export type {
-  ObstacleType,
-  ReportStatus,
-  RemovalReason,
-  ReportSubmitter,
-  CommunityVotes,
-  GpsCoordinates,
+  IncidentTypeLabel,
+  IncidentStatusLabel,
   Report,
   ReportDetails,
   ReportsQueryParams,
@@ -43,7 +41,7 @@ export type {
   RemoveReportFormValues,
 } from './reports';
 
-export { removeReportSchema } from './reports';
+export { removeReportSchema, incidentTypeLabels, incidentStatusLabels } from './reports';
 
 export type {
   ProviderServiceType,
@@ -103,12 +101,11 @@ export type {
   NotificationStatus,
   NotificationAudience,
   NotificationDeliveryChannel,
-  AdminRole,
   AdminNotification,
   NotificationsListResponse,
-  CreateNotificationPayload,
   UpdateNotificationPayload,
   CreateNotificationFormValues,
+  CreateAnnouncementRequest,
 } from './notifications';
 
 export { createNotificationSchema, STATUS_LABELS, AUDIENCE_LABELS } from './notifications';

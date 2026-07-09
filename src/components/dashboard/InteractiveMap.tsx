@@ -59,8 +59,8 @@ export const InteractiveMap = ({ events, isLoading, error, isEmpty }: Interactiv
     <DashboardPanel title="Live Map Events" action={<Legend />}>
       <div className="relative z-0 h-85 w-full overflow-hidden rounded-xl border border-border">
         <MapContainer
-          center={[30.0444, 31.2357]}
-          zoom={11}
+          center={[events[0].coordinates.lat, events[0].coordinates.lng]}
+          zoom={25}
           scrollWheelZoom={false}
           style={{ height: '100%', width: '100%' }}>
           <TileLayer

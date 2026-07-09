@@ -21,15 +21,19 @@ import {
 } from '@/components/ui';
 import { useAuthStore } from '@/store/auth-store';
 import { useGetAdminProfile, useSaveAdminProfile } from '@/hooks/settings/useSettings';
-import type { AdminProfile } from '@/types/settings';
+import type { UpdateProfileRequest } from '@/types/settings';
 
+/**
+ * Profile form Zod schema.
+ * Field names match UpdateProfileRequest exactly (fullName, email, phoneNumber).
+ */
 const profileSchema = z.object({
   fullName: z.string().min(1, 'Full name is required').max(100),
   email: z.email('Invalid email address'),
-  phoneNumber: z.string().min(7, 'Phone number too short').max(20),
+  phoneNumber: z.string().min(7, 'Phone number too short').max(20).optional().or(z.literal('')),
 });
 
-type ProfileFormValues = Omit<AdminProfile, 'id' | 'role'>;
+type ProfileFormValues = z.infer<typeof profileSchema>;
 
 interface ProfileSettingsFormProps {
   onDirtyChange?: (dirty: boolean) => void;
@@ -56,9 +60,10 @@ export function ProfileSettingsForm({ onDirtyChange }: ProfileSettingsFormProps)
     if (profile) {
       form.reset({
         // Prefer auth store values for name & email; fall back to API profile
-        fullName: authUser?.name ?? profile.fullName,
-        email: authUser?.email ?? profile.email,
-        phoneNumber: profile.phoneNumber,
+        // Backend returns `fullName` (ProfileSettingsResponse.fullName)
+        fullName: authUser?.name ?? profile.fullName ?? '',
+        email: authUser?.email ?? profile.email ?? '',
+        phoneNumber: profile.phoneNumber ?? '',
       });
     }
   }, [profile, authUser, form]);
@@ -68,14 +73,20 @@ export function ProfileSettingsForm({ onDirtyChange }: ProfileSettingsFormProps)
   }, [form.formState.isDirty, onDirtyChange]);
 
   const onSubmit = (data: ProfileFormValues) => {
-    mutation.mutate(data, {
+    // Build UpdateProfileRequest — field names match the backend exactly
+    const payload: UpdateProfileRequest = {
+      fullName: data.fullName,
+      email: data.email,
+      phoneNumber: data.phoneNumber || null,
+    };
+    mutation.mutate(payload, {
       onSuccess: () => {
         form.reset(data);
       },
     });
   };
 
-  // Derive display role: auth store role → "Admin", else fall back to API profile role
+  // Derive display role: auth store role → capitalize, else fall back to API profile role
   const displayRole = authUser?.role
     ? authUser.role.charAt(0).toUpperCase() + authUser.role.slice(1)
     : (profile?.role ?? 'Admin');

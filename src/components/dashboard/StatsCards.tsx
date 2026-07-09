@@ -39,7 +39,7 @@ export const StatsCards = ({ metrics, isLoading = false, error = null }: StatsCa
   if (isLoading) {
     return (
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
+        {Array.from({ length: 5 }).map((_, i) => (
           <article
             key={i}
             className="min-h-36 rounded-xl border border-border bg-card px-6 py-6 shadow-sm">
@@ -77,23 +77,24 @@ export const StatsCards = ({ metrics, isLoading = false, error = null }: StatsCa
 
   return (
     <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-      {metrics.map((metric) => {
+      {metrics.map((metric, i) => {
+        const id = metric.id ?? `unknown-${i}`;
         const isPositive = metric.trend?.direction === 'up';
         const TrendIcon = isPositive ? TrendingUp : TrendingDown;
-        const Icon = metricIcons[metric.id] || Activity;
-        const iconColorClass = iconColors[metric.id] || 'bg-muted text-muted-foreground';
+        const Icon = metricIcons[id] || Activity;
+        const iconColorClass = iconColors[id] || 'bg-muted text-muted-foreground';
 
         const cardContent = (
           <article
-            key={metric.id}
+            key={id}
             className="min-h-36 rounded-xl border border-border bg-card px-6 py-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
             <div className="flex items-start justify-between gap-5">
               <div className="min-w-0">
                 <h2 className="text-sm font-normal leading-5 text-muted-foreground">
-                  {metric.label}
+                  {metric.label ?? 'Metric'}
                 </h2>
                 <p className="mt-1 text-[28px] leading-9 font-bold tracking-normal">
-                  {metric.value.toLocaleString()}
+                  {(metric.value ?? 0).toLocaleString()}
                 </p>
               </div>
 
@@ -123,7 +124,7 @@ export const StatsCards = ({ metrics, isLoading = false, error = null }: StatsCa
         if (metric.targetRoute) {
           return (
             <Link
-              key={metric.id}
+              key={id}
               to={metric.targetRoute}
               className="focus:outline-none rounded-xl">
               {cardContent}

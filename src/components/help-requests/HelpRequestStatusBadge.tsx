@@ -1,27 +1,25 @@
 import { Badge } from '@/components/ui/badge';
-import type { HelpRequestStatus } from '@/types/help-requests';
 
 interface HelpRequestStatusBadgeProps {
-  status: HelpRequestStatus;
+  status: string;
 }
 
-export const HelpRequestStatusBadge = ({ status }: HelpRequestStatusBadgeProps) => {
-  const variantMap: Record<
-    HelpRequestStatus,
-    { variant: 'default' | 'secondary' | 'outline' | 'destructive'; className?: string }
-  > = {
-    Active: {
-      variant: 'destructive',
-      className: 'bg-destructive text-white hover:bg-destructive/90',
-    },
-    Assigned: { variant: 'default', className: 'bg-primary hover:bg-primary/90' },
-    Completed: { variant: 'secondary', className: 'text-white bg-success hover:bg-success/90' },
-  };
+const statusVariantMap: Record<string, { variant: 'default' | 'secondary' | 'outline' | 'destructive'; className?: string }> = {
+  // Backend status strings (AssistanceStatus enum names)
+  Pending: { variant: 'destructive', className: 'bg-destructive text-white hover:bg-destructive/90' },
+  Accepted: { variant: 'default', className: 'bg-primary hover:bg-primary/90' },
+  Completed: { variant: 'secondary', className: 'text-white bg-success hover:bg-success/90' },
+  Cancelled: { variant: 'outline' },
+  // Legacy statuses
+  Active: { variant: 'destructive', className: 'bg-destructive text-white hover:bg-destructive/90' },
+  Assigned: { variant: 'default', className: 'bg-primary hover:bg-primary/90' },
+};
 
-  const { variant, className } = variantMap[status];
+export const HelpRequestStatusBadge = ({ status }: HelpRequestStatusBadgeProps) => {
+  const config = statusVariantMap[status] ?? { variant: 'outline' as const };
 
   return (
-    <Badge variant={variant} className={className}>
+    <Badge variant={config.variant} className={config.className}>
       {status}
     </Badge>
   );

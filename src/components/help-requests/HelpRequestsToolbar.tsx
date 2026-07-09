@@ -72,10 +72,10 @@ export const HelpRequestsToolbar = ({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Categories</SelectItem>
-          <SelectItem value="Medical">Medical</SelectItem>
-          <SelectItem value="Towing">Towing</SelectItem>
-          <SelectItem value="Fuel">Fuel</SelectItem>
-          <SelectItem value="Repair">Repair</SelectItem>
+          <SelectItem value="CarBreakdown">Car Breakdown</SelectItem>
+          <SelectItem value="FlatTire">Flat Tire</SelectItem>
+          <SelectItem value="MedicalHelp">Medical Help</SelectItem>
+          <SelectItem value="Weather">Weather</SelectItem>
         </SelectContent>
       </Select>
 

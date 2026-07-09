@@ -27,3 +27,7 @@ dist-ssr
 .agent
 .agents
 .opencode
+
+# Universal
+*.tmp
+Thumbs.db

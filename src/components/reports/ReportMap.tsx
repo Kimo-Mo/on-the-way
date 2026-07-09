@@ -3,7 +3,6 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin } from 'lucide-react';
-import type { GpsCoordinates } from '@/types/reports';
 
 // Fix for default Leaflet markers
 delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl?: string })._getIconUrl;
@@ -14,12 +13,16 @@ L.Icon.Default.mergeOptions({
 });
 
 interface ReportMapProps {
-  gpsCoordinates: GpsCoordinates | null;
-  location: string;
+  /** Latitude from backend (AdminReportDetails.latitude) */
+  latitude: number | null;
+  /** Longitude from backend (AdminReportDetails.longitude) */
+  longitude: number | null;
+  /** Human-readable address label for the map popup */
+  address: string;
 }
 
-export const ReportMap = ({ gpsCoordinates, location }: ReportMapProps) => {
-  if (!gpsCoordinates) {
+export const ReportMap = ({ latitude, longitude, address }: ReportMapProps) => {
+  if (latitude == null || longitude == null) {
     return (
       <Card className="border-dashed">
         <CardHeader className="pb-2">
@@ -35,33 +38,21 @@ export const ReportMap = ({ gpsCoordinates, location }: ReportMapProps) => {
     );
   }
 
-  const { lat, lng } = gpsCoordinates;
-
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <MapPin className="h-4 w-4" />
-          Location
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div style={{ height: '300px', width: '100%' }}>
-          <MapContainer
-            center={[lat, lng]}
-            zoom={15}
-            scrollWheelZoom={false}
-            style={{ height: '100%', width: '100%' }}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={[lat, lng]}>
-              <Popup>{location}</Popup>
-            </Marker>
-          </MapContainer>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="w-full h-75">
+      <MapContainer
+        center={[latitude, longitude]}
+        zoom={15}
+        scrollWheelZoom={false}
+        style={{ height: '100%', width: '100%' }}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={[latitude, longitude]}>
+          <Popup>{address}</Popup>
+        </Marker>
+      </MapContainer>
+    </div>
   );
 };

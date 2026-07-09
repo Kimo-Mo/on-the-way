@@ -16,10 +16,8 @@ import { useCreateNotification } from '@/hooks/notifications/useNotifications';
 import {
   createNotificationSchema,
   type CreateNotificationFormValues,
-  type CreateNotificationPayload,
+  type CreateAnnouncementRequest,
   type NotificationRole,
-  type NotificationType,
-  type NotificationPriority,
 } from '@/types/notifications';
 import { AudienceSelector } from './AudienceSelector';
 import { RoleSelectorField } from './RoleSelectorField';
@@ -43,31 +41,31 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
     resolver: zodResolver(createNotificationSchema),
     defaultValues: {
       title: '',
-      message: '',
+      content: '',
       targetAudience: 'Broadcast',
-      type: 'Maintenance',
+      category: 'Maintenance',
       priority: 'Low',
       roles: [],
-      scheduledAt: null,
+      publishDate: null,
       action: 'draft',
     },
   });
 
   const targetAudience = watch('targetAudience');
   const titleLength = watch('title')?.length ?? 0;
-  const messageLength = watch('message')?.length ?? 0;
+  const messageLength = watch('content')?.length ?? 0;
 
   const onSubmit = (values: CreateNotificationFormValues) => {
-    const payload: CreateNotificationPayload = {
+    // Build the exact payload as specified by the backend API:
+    // POST /api/admin/notifications — CreateAnnouncementRequest
+    const payload: CreateAnnouncementRequest = {
       title: values.title,
-      message: values.message,
-      targetAudience: values.targetAudience,
-      type: values.type,
-      priority: values.priority,
-      roles: targetAudience === 'SpecificRoles' ? roles : [],
-      deliveryChannels: ['Push', 'InApp'],
-      scheduledAt: values.scheduledAt ?? null,
-      action: values.action,
+      content: values.content,
+      // Backend expects the raw targetAudience string; "Broadcast" → "All Users" per API docs
+      targetAudience: values.targetAudience === 'Broadcast' ? 'All Users' : values.targetAudience,
+      category: values.category,
+      publishDate: values.publishDate ?? null,
+      isPublished: values.action === 'publish',
     };
     createNotification(payload, { onSuccess: onClose });
   };
@@ -93,10 +91,10 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
           id="notif-message"
           placeholder="Notification message body"
           rows={3}
-          {...register('message')}
+          {...register('content')}
         />
         <div className="flex justify-between">
-          {errors.message && <p className="text-destructive text-xs">{errors.message.message}</p>}
+          {errors.content && <p className="text-destructive text-xs">{errors.content.message}</p>}
           <span className="text-xs text-muted-foreground ml-auto">{messageLength}/500</span>
         </div>
       </div>
@@ -106,9 +104,9 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
         <div className="space-y-1">
           <Label>Type</Label>
           <Select
-            value={watch('type')}
+            value={watch('category')}
             onValueChange={(val) =>
-              setValue('type', val as NotificationType, { shouldValidate: true })
+              setValue('category', val as CreateNotificationFormValues['category'], { shouldValidate: true })
             }>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select type" />
@@ -121,14 +119,14 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
               <SelectItem value="Event">Event</SelectItem>
             </SelectContent>
           </Select>
-          {errors.type && <p className="text-destructive text-xs">{errors.type.message}</p>}
+          {errors.category && <p className="text-destructive text-xs">{errors.category.message}</p>}
         </div>
         <div className="space-y-1">
           <Label>Priority</Label>
           <Select
             value={watch('priority')}
             onValueChange={(val) =>
-              setValue('priority', val as NotificationPriority, { shouldValidate: true })
+              setValue('priority', val as CreateNotificationFormValues['priority'], { shouldValidate: true })
             }>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select priority" />
@@ -178,7 +176,7 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
             id="notif-schedule"
             type="datetime-local"
             min={new Date().toISOString().slice(0, 16)}
-            onChange={(e) => setValue('scheduledAt', e.target.value || null)}
+            onChange={(e) => setValue('publishDate', e.target.value || null)}
           />
         </div>
       )}
