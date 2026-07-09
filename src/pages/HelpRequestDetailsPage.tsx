@@ -2,7 +2,6 @@ import { useParams, useNavigate } from 'react-router';
 import {
   useHelpRequestDetails,
   useUpdateHelpRequestStatus,
-  useReassignProvider,
 } from '@/hooks/help-requests/useHelpRequests';
 import { PageError } from '@/components/shared';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,6 @@ const HelpRequestDetailsPage = () => {
   const navigate = useNavigate();
   const { data: request, isLoading, isError } = useHelpRequestDetails(id ?? '');
   const { mutate: updateStatus, isPending: isUpdatingStatus } = useUpdateHelpRequestStatus();
-  const { isPending: isReassigning } = useReassignProvider();
 
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
@@ -113,10 +111,8 @@ const HelpRequestDetailsPage = () => {
               request={request}
               onMarkCompleted={handleMarkCompleted}
               onCancelRequest={handleCancelRequest}
-              onReassignProvider={() => {}}
               onContactUser={handleContactUser}
               isUpdatingStatus={isUpdatingStatus}
-              isReassigning={isReassigning}
             />
           </div>
         </div>

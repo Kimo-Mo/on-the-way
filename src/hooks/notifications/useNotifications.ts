@@ -6,12 +6,10 @@ import type {
   AdminNotification,
   CreateAnnouncementRequest,
 } from '@/types/notifications';
-import type { Notification } from '@/types';
 
 // ─── Query Keys ──────────────────────────────────────────────────────────────
 
 export const NOTIFICATIONS_QUERY_KEY = ['notifications', 'list'] as const;
-export const HEADER_NOTIFICATIONS_QUERY_KEY = ['notifications', 'header'] as const;
 export const NOTIFICATION_DETAIL_QUERY_KEY = (id: string) =>
   ['notifications', 'detail', id] as const;
 
@@ -77,36 +75,6 @@ export function useGetNotificationById(id: string) {
     },
     enabled: !!id,
     staleTime: 60_000,
-  });
-}
-
-/**
- * Fetches header notifications — takes only the first 5 items from the full list.
- * Used by the header bell icon in the layout.
- */
-export function useGetHeaderNotifications() {
-  return useQuery<Notification[]>({
-    queryKey: HEADER_NOTIFICATIONS_QUERY_KEY,
-    queryFn: async () => {
-      const response = await api.get<ApiResponse<AdminNotification[]>>('/admin/notifications');
-      const envelope = response.data;
-
-      const raw: AdminNotification[] =
-        envelope.isSuccess && envelope.data !== null ? envelope.data : [];
-
-      return raw.slice(0, 5).map((n) => ({
-        id: n.id ?? '',
-        title: n.title ?? '',
-        description: n.content ?? '',
-        timestamp: new Date(n.createdAt ?? n.publishDate ?? Date.now()),
-        isRead: false,
-        type: 'info' as const,
-      }));
-    },
-    staleTime: 30_000,
-    refetchInterval: 60_000,
-    refetchIntervalInBackground: false,
-    refetchOnWindowFocus: false,
   });
 }
 

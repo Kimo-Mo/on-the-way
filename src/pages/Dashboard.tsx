@@ -1,4 +1,4 @@
-import { FlaggedContentPanel, RecentActivity, StatsCards } from '@/components/dashboard';
+import { RecentActivity, StatsCards } from '@/components/dashboard';
 import { PageHeader, PageError, CardSkeleton } from '@/components/shared';
 import { useDashboardOverview } from '@/hooks/dashboard/useDashboard';
 import type {
@@ -110,8 +110,7 @@ function buildMetrics(data: {
 }
 
 const Dashboard = () => {
-  const { data, isLoading, error, approveFlaggedContent, removeFlaggedContent, flagRelatedUser } =
-    useDashboardOverview();
+  const { data, isLoading, error } = useDashboardOverview();
 
   // Map backend response to what each component expects
   const metrics: DashboardMetric[] = data
@@ -199,19 +198,6 @@ const Dashboard = () => {
         </Suspense>
       </div>
 
-      {/* Flagged content is not in the new backend API — show empty state */}
-      <FlaggedContentPanel
-        items={[]}
-        pendingCount={0}
-        isLoading={isLoading}
-        error={error}
-        onApprove={(id) => approveFlaggedContent.mutate(id)}
-        onRemove={(id) => removeFlaggedContent.mutate(id)}
-        onFlagUser={(id) => flagRelatedUser.mutate(id)}
-        approveLoading={approveFlaggedContent.isPending}
-        removeLoading={removeFlaggedContent.isPending}
-        flagUserLoading={flagRelatedUser.isPending}
-      />
     </section>
   );
 };

@@ -106,18 +106,3 @@ export const useUpdateHelpRequestStatus = () => {
   });
 };
 
-export const useReassignProvider = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, providerId }: { id: string; providerId: string }) =>
-      api.put(`/admin/help-requests/${id}/provider`, { providerId }),
-    onSuccess: (_, { id }) => {
-      toast.success('Provider reassigned successfully.');
-      queryClient.invalidateQueries({ queryKey: ['help-requests'] });
-      queryClient.invalidateQueries({ queryKey: HELP_REQUEST_DETAILS_QUERY_KEY(id) });
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to reassign provider.');
-    },
-  });
-};

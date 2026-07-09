@@ -65,7 +65,6 @@ export type DashboardMetricId =
   | 'totalUsers'
   | 'totalReports'
   | 'activeHelpRequests'
-  | 'serviceProviders'
   | 'reportsToday'
   | 'urgentIncidents'
   | string;
@@ -79,7 +78,7 @@ export interface DashboardMetric {
   targetRoute?: string;
 }
 
-export type MapEventCategory = 'urgentReport' | 'helpRequest' | 'provider' | string;
+export type MapEventCategory = 'urgentReport' | 'helpRequest' | string;
 
 export interface Coordinates {
   lat: number;

@@ -1,13 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useBlocker } from 'react-router';
 import { PageHeader } from '@/components/shared';
-import {
-  ProfileSettingsForm,
-  DisplayPreferencesForm,
-  NotificationPreferencesSection,
-  SystemSettingsForm,
-  UnsavedChangesDialog,
-} from '@/components/settings';
+import { ProfileSettingsForm, UnsavedChangesDialog } from '@/components/settings';
 
 export default function SettingsPage() {
   const [dirtyForms, setDirtyForms] = useState<Record<string, boolean>>({});
@@ -23,12 +17,6 @@ export default function SettingsPage() {
       <PageHeader title="Settings" subtitle="Manage your account and system preferences" />
 
       <ProfileSettingsForm onDirtyChange={(dirty) => handleDirtyChange('profile', dirty)} />
-
-      <NotificationPreferencesSection />
-
-      <SystemSettingsForm onDirtyChange={(dirty) => handleDirtyChange('system', dirty)} />
-
-      <DisplayPreferencesForm onDirtyChange={(dirty) => handleDirtyChange('display', dirty)} />
 
       <UnsavedChangesDialog
         open={blocker.state === 'blocked'}

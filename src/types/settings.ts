@@ -18,29 +18,3 @@ export interface UpdateProfileRequest {
   email: string;
   phoneNumber?: string | null;
 }
-
-// ─── Mock-only settings (no backend endpoints yet) ────────────────────────────
-
-export type AdminRole = string;
-
-export interface NotificationPreferences {
-  emailNotifications: boolean;
-  urgentReportAlerts: boolean;
-  moderationAlerts: boolean;
-  weeklyReports: boolean;
-}
-
-export type NotificationPreferenceKey = keyof NotificationPreferences;
-
-export interface SystemSettings {
-  autoApproveReports: boolean;
-  autoApproveThreshold: number;
-  providerApprovalMode: 'Manual' | 'Automatic';
-  trustScoreThreshold: number;
-  maxActiveHelpRequests: number;
-}
-
-export interface DisplayPreferences {
-  language: string;
-  timezone: string;
-}

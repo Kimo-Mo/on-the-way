@@ -1,11 +1,9 @@
 import {
-  Building2,
   ChartColumn,
   Info,
   LayoutDashboard,
   Megaphone,
   Settings,
-  Shield,
   TriangleAlert,
   Users,
 } from 'lucide-react';
@@ -32,16 +30,6 @@ const menuItems = [
     icon: Info,
     label: 'Help Requests',
     path: '/help-requests',
-  },
-  {
-    icon: Building2,
-    label: 'Service Providers',
-    path: '/providers',
-  },
-  {
-    icon: Shield,
-    label: 'Moderation',
-    path: '/moderation',
   },
   {
     icon: Megaphone,

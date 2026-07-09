@@ -2,13 +2,10 @@ import { useState } from 'react';
 import { ModeToggle, Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '../ui';
 import SidebarContent from './SidebarContent';
 import ProfileMenu from './ProfileMenu';
-import NotificationsPanel from './NotificationsPanel';
 import { Menu } from 'lucide-react';
-import { useGetHeaderNotifications } from '@/hooks/notifications/useNotifications';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { data: headerNotifications = [], isLoading: notificationsLoading } = useGetHeaderNotifications();
 
   return (
     <header className="min-h-16 border-b border-border flex items-center">
@@ -31,10 +28,9 @@ const Header = () => {
 
           <h2 className="text-accent-foreground text-2xl capitalize font-extrabold">on the way</h2>
         </div>
-        {/* notification icon & user menu */}
+        {/* user menu */}
         <div className="flex items-center gap-4">
           <ModeToggle />
-          <NotificationsPanel isLoading={notificationsLoading} notifications={headerNotifications} />
           <ProfileMenu />
         </div>
       </div>

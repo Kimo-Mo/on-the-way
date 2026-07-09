@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { Phone, CheckCircle, RefreshCw, XCircle } from 'lucide-react';
+import { Phone, CheckCircle, XCircle } from 'lucide-react';
 import type { HelpRequest, HelpRequestDetails } from '@/types/help-requests';
 import { TERMINAL_STATUSES } from '@/types/help-requests';
 
@@ -9,20 +9,16 @@ interface ActionPanelProps {
   request: HelpRequest | HelpRequestDetails;
   onMarkCompleted: () => void;
   onCancelRequest: () => void;
-  onReassignProvider: () => void;
   onContactUser: () => void;
   isUpdatingStatus: boolean;
-  isReassigning: boolean;
 }
 
 export const ActionPanel = ({
   request,
   onMarkCompleted,
   onCancelRequest,
-  onReassignProvider,
   onContactUser,
   isUpdatingStatus,
-  isReassigning,
 }: ActionPanelProps) => {
   const isTerminal = request.status ? TERMINAL_STATUSES.includes(request.status) : false;
 
@@ -46,8 +42,7 @@ export const ActionPanel = ({
                     variant="default"
                     className="w-full"
                     disabled={isTerminal || isUpdatingStatus}
-                    onClick={onMarkCompleted}
-                  >
+                    onClick={onMarkCompleted}>
                     <CheckCircle className="mr-2 h-4 w-4" />
                     Mark as Completed
                   </Button>
@@ -66,34 +61,10 @@ export const ActionPanel = ({
               <TooltipTrigger asChild>
                 <span>
                   <Button
-                    variant="outline"
-                    className="w-full"
-                    disabled={isTerminal || isReassigning}
-                    onClick={onReassignProvider}
-                  >
-                    <RefreshCw className="mr-2 h-4 w-4" />
-                    Reassign Provider
-                  </Button>
-                </span>
-              </TooltipTrigger>
-              {(isTerminal || isReassigning) && (
-                <TooltipContent>
-                  {isTerminal ? 'Cannot reassign a completed or cancelled request' : 'Updating…'}
-                </TooltipContent>
-              )}
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span>
-                  <Button
                     variant="destructive"
                     className="w-full"
                     disabled={isTerminal || isUpdatingStatus}
-                    onClick={onCancelRequest}
-                  >
+                    onClick={onCancelRequest}>
                     <XCircle className="mr-2 h-4 w-4" />
                     Cancel Request
                   </Button>
