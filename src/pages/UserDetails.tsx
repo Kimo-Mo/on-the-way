@@ -163,7 +163,7 @@ const UserDetails = () => {
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Trust Score</p>
               <div className="flex items-center gap-3">
-                <span className="text-lg font-semibold w-16">{user.trustScore}%</span>
+                <span className="text-lg font-semibold w-16">{user.trustScore}</span>
                 <Progress value={user.trustScore} className="flex-1" />
               </div>
             </div>

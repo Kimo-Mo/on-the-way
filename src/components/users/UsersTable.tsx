@@ -54,7 +54,7 @@ export const UsersTable = ({ users, onViewDetails }: UsersTableProps) => {
                   <TableCell className="whitespace-nowrap">
                     <UserStatusBadge status={user.status} />
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">{user.trustScore}%</TableCell>
+                  <TableCell className="whitespace-nowrap">{user.trustScore}</TableCell>
                   <TableCell className="whitespace-nowrap">
                     <Button
                       onClick={() => onViewDetails(user.id)}
