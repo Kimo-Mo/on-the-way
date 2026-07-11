@@ -54,4 +54,4 @@ export type {
   CreateAnnouncementRequest,
 } from './notifications';
 
-export { createNotificationSchema, STATUS_LABELS, AUDIENCE_LABELS } from './notifications';
+export { createNotificationSchema, AUDIENCE_LABELS, deriveNotificationStatus } from './notifications';

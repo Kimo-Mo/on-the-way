@@ -14,9 +14,11 @@ interface ReportsToolbarProps {
   search: string;
   obstacleType: string;
   sortOrder: string;
+  status: string;
   onSearchChange: (value: string) => void;
   onObstacleTypeChange: (value: string) => void;
   onSortOrderChange: (value: string) => void;
+  onStatusChange: (value: string) => void;
   onClearFilters: () => void;
   isFiltered: boolean;
 }
@@ -25,9 +27,11 @@ export const ReportsToolbar = ({
   search,
   obstacleType,
   sortOrder,
+  status,
   onSearchChange,
   onObstacleTypeChange,
   onSortOrderChange,
+  onStatusChange,
   onClearFilters,
   isFiltered,
 }: ReportsToolbarProps) => {
@@ -87,6 +91,18 @@ export const ReportsToolbar = ({
         <SelectContent>
           <SelectItem value="desc">Latest</SelectItem>
           <SelectItem value="asc">Oldest</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select value={status || 'all'} onValueChange={onStatusChange}>
+        <SelectTrigger className="w-40">
+          <SelectValue placeholder="Select Status" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Statuses</SelectItem>
+          <SelectItem value="Open">Open</SelectItem>
+          <SelectItem value="Solved">Solved</SelectItem>
+          <SelectItem value="Closed">Closed</SelectItem>
         </SelectContent>
       </Select>
 

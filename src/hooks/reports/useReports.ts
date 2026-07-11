@@ -5,7 +5,6 @@ import type {
   ReportDetails,
   ReportsListResponse,
   ReportsQueryParams,
-  RemoveReportPayload,
 } from '@/types/reports';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -17,10 +16,11 @@ import { toast } from 'sonner';
  * Backend wraps the response in ApiResponse<Report[]>.
  */
 export const fetchReports = async (params: ReportsQueryParams): Promise<ReportsListResponse> => {
-  const apiParams: { search?: string; type?: string; sortOrder?: string } = {
+  const apiParams: { search?: string; type?: string; sortOrder?: string; status?: string } = {
     search: params.search,
     type: params.type,
     sortOrder: params.sortOrder,
+    status: params.status,
   };
   const response = await api.get<ApiResponse<Report[]>>('/admin/reports', { params: apiParams });
   const envelope = response.data;
@@ -90,63 +90,32 @@ export const useReportDetails = (id: string) => {
 
 // ─── Mutation Hooks ──────────────────────────────────────────────────────────
 
-export const useApproveReport = () => {
+export const useUpdateReportStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => api.post(`/admin/reports/${id}/approve`),
-    onSuccess: (_, id) => {
-      toast.success('Report approved successfully.');
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
-      queryClient.invalidateQueries({ queryKey: REPORT_DETAILS_QUERY_KEY(id) });
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to approve report.');
-    },
-  });
-};
+    mutationFn: ({ id, newStatus }: { id: string; newStatus: number }) =>
+      api.put(`/admin/reports/${id}/status`, { newStatus }),
+    onSuccess: (_, { id, newStatus }) => {
+      const statusMap: Record<number, string> = { 0: 'Open', 1: 'Solved', 2: 'Closed' };
+      const statusStr = statusMap[newStatus];
+      toast.success(`Report marked as ${statusStr}.`);
 
-export const useMarkUrgent = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => api.post(`/admin/reports/${id}/mark-urgent`),
-    onSuccess: (_, id) => {
-      toast.success('Report marked as urgent.');
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
-      queryClient.invalidateQueries({ queryKey: REPORT_DETAILS_QUERY_KEY(id) });
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to mark report as urgent.');
-    },
-  });
-};
+      queryClient.setQueryData<ReportDetails>(REPORT_DETAILS_QUERY_KEY(id), (old) =>
+        old ? { ...old, status: statusStr } : old
+      );
+      queryClient.setQueriesData<ReportsListResponse>({ queryKey: ['reports'] }, (old) => {
+        if (!old || !old.data || !Array.isArray(old.data)) return old;
+        return {
+          ...old,
+          data: old.data.map((r) => (r.id === id ? { ...r, status: statusStr } : r)),
+        };
+      });
 
-export const useFlagUser = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => api.post(`/admin/reports/${id}/flag-user`),
-    onSuccess: (_, id) => {
-      toast.success('User flagged for moderation review.');
       queryClient.invalidateQueries({ queryKey: ['reports'] });
       queryClient.invalidateQueries({ queryKey: REPORT_DETAILS_QUERY_KEY(id) });
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Failed to flag user.');
-    },
-  });
-};
-
-export const useRemoveReport = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: RemoveReportPayload }) =>
-      api.delete(`/admin/reports/${id}`, { data: payload }),
-    onSuccess: (_, { id }) => {
-      toast.success('Report removed successfully.');
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
-      queryClient.invalidateQueries({ queryKey: REPORT_DETAILS_QUERY_KEY(id) });
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || 'Failed to remove report.');
+      toast.error(error.message || 'Failed to update report status.');
     },
   });
 };

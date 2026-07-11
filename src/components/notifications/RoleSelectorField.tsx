@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import type { NotificationRole } from '@/types/notifications';
 
-const ALL_ROLES: NotificationRole[] = ['Driver', 'ServiceProvider', 'Admin'];
+const ALL_ROLES: NotificationRole[] = ['Driver', 'Admin'];
 
 interface RoleSelectorFieldProps {
   selectedRoles: NotificationRole[];

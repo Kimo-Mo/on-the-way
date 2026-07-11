@@ -75,14 +75,6 @@ const UsersManagement = () => {
         <PageError message="Failed to load users. Please try again." onRetry={() => refetch()} />
       )}
 
-      {!isLoading && !isError && (data?.data ?? []).length === 0 && (
-        <PageEmpty
-          title="No users found"
-          description={isFiltered ? 'Try clearing your filters' : undefined}
-          icon={Users}
-        />
-      )}
-
       <UsersTableToolbar
         search={search}
         role={role}
@@ -106,6 +98,13 @@ const UsersManagement = () => {
             onPageChange={goToPage}
           />
         </>
+      )}
+      {!isLoading && !isError && (data?.data ?? []).length === 0 && (
+        <PageEmpty
+          title="No users found"
+          description={isFiltered ? 'Try clearing your filters' : undefined}
+          icon={Users}
+        />
       )}
     </section>
   );

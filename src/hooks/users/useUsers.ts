@@ -7,6 +7,7 @@ import type {
   UsersQueryParams,
   UpdateUserStatusRequest,
   UserStatusEnum,
+  RegisterAdminRequest,
 } from '@/types/users';
 import { userStatusToNumeric } from '@/types/users';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
@@ -120,7 +121,7 @@ export const useUpdateUserStatus = () => {
     },
     onSuccess: (_, { id, status }) => {
       toast.success(`User status updated to ${status}.`);
-      
+
       // Optimistic update for the specific user's details cache
       queryClient.setQueryData<UserDetails>(USER_DETAILS_QUERY_KEY(id), (old) => {
         if (!old) return old;
@@ -128,17 +129,14 @@ export const useUpdateUserStatus = () => {
       });
 
       // Optimistic update for all paginated users list caches
-      queryClient.setQueriesData<UsersListResponse>(
-        { queryKey: ['users'] },
-        (old) => {
-          // Because ['users'] matches both list and details queries, we verify it's a list response
-          if (!old || !old.data || !Array.isArray(old.data)) return old;
-          return {
-            ...old,
-            data: old.data.map((u) => (u.id === id ? { ...u, status } : u)),
-          };
-        }
-      );
+      queryClient.setQueriesData<UsersListResponse>({ queryKey: ['users'] }, (old) => {
+        // Because ['users'] matches both list and details queries, we verify it's a list response
+        if (!old || !old.data || !Array.isArray(old.data)) return old;
+        return {
+          ...old,
+          data: old.data.map((u) => (u.id === id ? { ...u, status } : u)),
+        };
+      });
 
       // Invalidate to ensure consistency in the background
       queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -146,6 +144,42 @@ export const useUpdateUserStatus = () => {
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to update user status.');
+    },
+  });
+};
+
+export const useMakeUserAdmin = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.put(`/admin/users/${id}/role/admin`),
+    onSuccess: (_, id) => {
+      toast.success('User has been granted Admin role.');
+      
+      queryClient.setQueryData<UserDetails>(USER_DETAILS_QUERY_KEY(id), (old) => old ? { ...old, role: 'Admin' } : old);
+      queryClient.setQueriesData<UsersListResponse>({ queryKey: ['users'] }, (old) => {
+        if (!old || !old.data || !Array.isArray(old.data)) return old;
+        return { ...old, data: old.data.map((u) => u.id === id ? { ...u, role: 'Admin' } : u) };
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: USER_DETAILS_QUERY_KEY(id) });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to make user admin.');
+    },
+  });
+};
+
+export const useRegisterAdmin = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: RegisterAdminRequest) => api.post('/admin/users/register-admin', data),
+    onSuccess: () => {
+      toast.success('Admin successfully registered.');
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to register admin.');
     },
   });
 };

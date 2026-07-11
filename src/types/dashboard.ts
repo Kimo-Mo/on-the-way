@@ -38,6 +38,8 @@ export interface DashboardAnalyticsResponse {
   helpRequestsByCategory: ChartPoint[];
   userGrowth: ChartPoint[];
   recentActivities: RecentActivityDto[];
+  userRoleDistribution: { count: number; percentage: number; role: string; }[];
+  mapData: { recentIncidents: { id: string; type: string; latitude: number; longitude: number; createdAt: string; }[]; recentHelpRequests: { id: string; type: string; latitude: number; longitude: number; createdAt: string; }[]; };
 }
 
 // ─── Re-export ApiResponse for dashboard consumers ────────────────────────────

@@ -5,8 +5,7 @@ import { z } from 'zod';
 export type NotificationStatus = 'Published' | 'Draft' | 'Scheduled' | 'Failed';
 export type NotificationAudience = 'Broadcast' | 'SpecificRoles';
 export type NotificationDeliveryChannel = 'Push' | 'InApp';
-export type NotificationRole = 'Driver' | 'ServiceProvider' | 'Admin';
-export type NotificationPriority = 'High' | 'Medium' | 'Low';
+export type NotificationRole = 'Driver' | 'Admin';
 export type NotificationType = 'Maintenance' | 'Policy' | 'Safety' | 'Legal' | 'Event';
 
 // ─── List Item (GET /api/admin/notifications) ─────────────────────────────────
@@ -54,9 +53,7 @@ export interface AdminNotification {
   isPublished?: boolean;
   adminName?: string;
   // UI-extended fields (not all present in API responses):
-  status?: string;
   type?: string;
-  priority?: string;
   roles?: string[];
   deliveryChannels?: string[];
   createdAt?: string; // ISO 8601
@@ -103,9 +100,6 @@ export const createNotificationSchema = z
     category: z.enum(['Maintenance', 'Policy', 'Safety', 'Legal', 'Event'], {
       message: 'Category is required',
     }),
-    priority: z.enum(['High', 'Medium', 'Low'], {
-      message: 'Priority is required',
-    }),
     roles: z.array(z.enum(['Driver', 'ServiceProvider', 'Admin'])).optional(),
     publishDate: z.string().nullable().optional(),
     isPublished: z.boolean().optional(),
@@ -119,20 +113,36 @@ export const createNotificationSchema = z
         path: ['roles'],
       });
     }
+    if (data.action === 'schedule' && (!data.publishDate || data.publishDate.trim() === '')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Schedule date is required when scheduling',
+        path: ['publishDate'],
+      });
+    }
   });
 
 export type CreateNotificationFormValues = z.infer<typeof createNotificationSchema>;
 
 // ─── Display Helpers ─────────────────────────────────────────────────────────
 
-export const STATUS_LABELS: Record<NotificationStatus, string> = {
-  Published: 'Published',
-  Draft: 'Draft',
-  Scheduled: 'Scheduled',
-  Failed: 'Failed',
-};
-
 export const AUDIENCE_LABELS: Record<NotificationAudience, string> = {
   Broadcast: 'All Users',
   SpecificRoles: 'Specific Roles',
 };
+
+/**
+ * Derives the notification status dynamically from publishDate and isPublished.
+ * - publishDate is null => "Draft"
+ * - publishDate is in the future => "Scheduled"
+ * - otherwise (publishDate is past/present) => "Published"
+ */
+export function deriveNotificationStatus(
+  publishDate: string | null | undefined,
+): NotificationStatus {
+  if (!publishDate) return 'Draft';
+  const utcDate = publishDate.endsWith('Z') ? publishDate : publishDate + 'Z';
+  const scheduledTime = new Date(utcDate).getTime();
+  if (scheduledTime > Date.now()) return 'Scheduled';
+  return 'Published';
+}

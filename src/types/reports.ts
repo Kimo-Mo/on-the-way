@@ -32,6 +32,7 @@ export interface ReportDetails {
   imageUrl: string | null;
   upvotes: number;
   downvotes: number;
+  status: string;
 }
 
 // ─── Query Params ─────────────────────────────────────────────────────────────
@@ -42,6 +43,7 @@ export interface ReportsQueryParams {
   search?: string;
   type?: string;
   sortOrder?: string;
+  status?: string;
 }
 
 // ─── List Response ─────────────────────────────────────────────────────────────

@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 // ─── Enums (integer values match backend exactly) ─────────────────────────────
 
 /** Backend sends status as a string: "Active" | "Suspended" | "Banned" */
@@ -91,3 +93,19 @@ export interface PaginatedResponse<T> {
   pageSize: number;
   totalPages: number;
 }
+
+// ─── Register Admin Request ───────────────────────────────────────────────────
+
+export const registerAdminSchema = z
+  .object({
+    fullName: z.string().min(1, 'Full Name is required'),
+    email: z.email('Invalid email address'),
+    password: z.string().min(6, 'Password must be at least 6 characters'),
+    confirmPassword: z.string().min(6, 'Confirm Password must be at least 6 characters'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
+
+export type RegisterAdminRequest = z.infer<typeof registerAdminSchema>;

@@ -4,6 +4,8 @@ export { NotificationsListToolbar } from './NotificationsListToolbar';
 export { NotificationRow } from './NotificationRow';
 export { NotificationsList } from './NotificationsList';
 export { CreateNotificationForm } from './CreateNotificationForm';
+export { NotificationDetailsModal } from './NotificationDetailsModal';
+export { DeleteNotificationModal } from './DeleteNotificationModal';
 export { AudienceSelector } from './AudienceSelector';
 export { RoleSelectorField } from './RoleSelectorField';
 export { NotificationPagination } from './NotificationPagination';

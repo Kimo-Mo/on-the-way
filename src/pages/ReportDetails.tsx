@@ -3,39 +3,27 @@ import { Calendar, ChevronLeft, Image, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useReportDetails } from '@/hooks/reports/useReports';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useReportDetails, useUpdateReportStatus } from '@/hooks/reports/useReports';
 import {
   ObstacleTypeBadge,
-  RemoveReportDialog,
   ReportImageGallery,
   ReportMap,
   ReportMetaSidebar,
 } from '@/components/reports';
-import { useApproveReport, useMarkUrgent } from '@/hooks/reports/useReports';
 
 const ReportDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const { data: report, isLoading, isError } = useReportDetails(id ?? '');
-  const approveMutation = useApproveReport();
-  const markUrgentMutation = useMarkUrgent();
-
-  const handleApprove = async () => {
-    if (id) {
-      await approveMutation.mutateAsync(id);
-    }
-  };
-
-  const handleMarkUrgent = async () => {
-    if (id) {
-      await markUrgentMutation.mutateAsync(id);
-    }
-  };
-
-  const handleRemoveSuccess = () => {
-    navigate('/reports');
-  };
+  const { mutate: updateStatus, isPending: isUpdating } = useUpdateReportStatus();
 
   if (isLoading) {
     return (
@@ -158,27 +146,26 @@ const ReportDetails = () => {
           downvotes={report.downvotes}
           address={report.address}
           actions={
-            <>
-              <Button
-                className="w-full bg-success hover:bg-success/80 font-semibold"
-                onClick={handleApprove}
-                disabled={approveMutation.isPending}
-                aria-label="Approve this report">
-                {approveMutation.isPending ? 'Approving...' : 'Approve Report'}
-              </Button>
-              <Button
-                className="w-full bg-warning hover:bg-warning/80 font-semibold"
-                onClick={handleMarkUrgent}
-                disabled={markUrgentMutation.isPending}
-                aria-label="Mark this report as urgent">
-                {markUrgentMutation.isPending ? 'Marking...' : 'Mark as Urgent'}
-              </Button>
-              <RemoveReportDialog
-                reportId={report.id}
-                onSuccess={handleRemoveSuccess}
-                className="w-full bg-destructive hover:bg-destructive/80 text-white font-semibold"
-              />
-            </>
+            <div className="w-full">
+              <label htmlFor="report-status" className="block text-sm font-medium mb-1">
+                Update Status
+              </label>
+              <Select
+                value={report.status === 'Open' ? '0' : report.status === 'Solved' ? '1' : '2'}
+                onValueChange={(val) =>
+                  updateStatus({ id: report.id, newStatus: parseInt(val, 10) })
+                }
+                disabled={isUpdating}>
+                <SelectTrigger id="report-status" className="w-full">
+                  <SelectValue placeholder="Change Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">Open</SelectItem>
+                  <SelectItem value="1">Solved</SelectItem>
+                  <SelectItem value="2">Closed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           }
         />
       </div>

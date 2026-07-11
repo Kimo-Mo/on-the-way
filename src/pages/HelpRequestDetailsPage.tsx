@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from 'react-router';
 import {
   useHelpRequestDetails,
-  useUpdateHelpRequestStatus,
+  useCompleteHelpRequest,
+  useCancelHelpRequest,
 } from '@/hooks/help-requests/useHelpRequests';
 import { PageError } from '@/components/shared';
 import { Button } from '@/components/ui/button';
@@ -22,7 +23,9 @@ const HelpRequestDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: request, isLoading, isError } = useHelpRequestDetails(id ?? '');
-  const { mutate: updateStatus, isPending: isUpdatingStatus } = useUpdateHelpRequestStatus();
+  const { mutate: completeRequest, isPending: isCompleting } = useCompleteHelpRequest();
+  const { mutate: cancelRequest, isPending: isCanceling } = useCancelHelpRequest();
+  const isUpdatingStatus = isCompleting || isCanceling;
 
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
@@ -38,10 +41,11 @@ const HelpRequestDetailsPage = () => {
   };
   const handleConfirmAction = () => {
     if (!id) return;
-    updateStatus(
-      { id, newStatus: confirmDialog.action === 'complete' ? 'Completed' : 'Cancelled' },
-      { onSuccess: () => setConfirmDialog((prev) => ({ ...prev, open: false })) }
-    );
+    if (confirmDialog.action === 'complete') {
+      completeRequest(id, { onSuccess: () => setConfirmDialog((prev) => ({ ...prev, open: false })) });
+    } else {
+      cancelRequest(id, { onSuccess: () => setConfirmDialog((prev) => ({ ...prev, open: false })) });
+    }
   };
   const handleContactUser = () => setContactModalOpen(true);
 

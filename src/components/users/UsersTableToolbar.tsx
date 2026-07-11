@@ -8,7 +8,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Search, X } from 'lucide-react';
+import { Search, X, UserPlus } from 'lucide-react';
+import { RegisterAdminModal } from './RegisterAdminModal';
 
 interface UsersTableToolbarProps {
   search: string;
@@ -38,6 +39,7 @@ export const UsersTableToolbar = ({
     setPrevSearch(search);
     setInputValue(search);
   }
+  const [isRegisterAdminOpen, setIsRegisterAdminOpen] = useState(false);
 
   const handleSearchChange = useCallback(
     (value: string) => {
@@ -95,6 +97,15 @@ export const UsersTableToolbar = ({
           Clear filters
         </Button>
       )}
+
+      <div className="ml-auto">
+        <Button variant="default" onClick={() => setIsRegisterAdminOpen(true)}>
+          <UserPlus className="mr-2 h-4 w-4" />
+          Add Admin
+        </Button>
+      </div>
+
+      <RegisterAdminModal open={isRegisterAdminOpen} onOpenChange={setIsRegisterAdminOpen} />
     </div>
   );
 };

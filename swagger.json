@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "On The way API",
-    "description": "## On The Way \n\nInternal API for managing On The way \n\n### Key Features:\n- Real-Time\n- Request Help \n- Report Incidents\n- Service Provider (Coming soon)",
+    "description": "## On The Way \n\n<img src=\"/images/ronaldo_loss.jpeg\" alt=\"On The Way\" width=\"300\" />\n<br/>\nInternal API for managing On The way \n\n### Key Features:\n- Real-Time\n- Request Help \n- Report Incidents\n- Service Provider (Coming soon)",
     "contact": {
       "name": "El-On The Way Back-End Team - Ali Ahmed El-husseiny",
       "url": "https://linktr.ee/ali.ahmed.software.engineer",
@@ -136,6 +136,37 @@
         }
       }
     },
+    "/api/auth/resend-email-otp": {
+      "post": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Resend Email Verification OTP",
+        "description": "Resend a new OTP code to verify the user's email address",
+        "operationId": "ResendEmailOtp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendEmailOtpRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/auth/login": {
       "post": {
         "tags": [
@@ -242,6 +273,37 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/GoogleLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/auth/refresh-token": {
+      "post": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Refresh Access Token",
+        "description": "Exchange an expired access token and a valid refresh token for a new token pair",
+        "operationId": "RefreshToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
               }
             }
           },
@@ -776,7 +838,7 @@
           "OnTheWay.api"
         ],
         "summary": "Get All Help Requests",
-        "description": "Retrieve a list of all help requests with optional filtering and sorting",
+        "description": "Retrieve a list of all help requests with optional filtering by search, type, status, and sorting",
         "operationId": "GetHelpRequests",
         "parameters": [
           {
@@ -795,6 +857,13 @@
           },
           {
             "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
             "in": "query",
             "schema": {
               "type": "string"
@@ -848,13 +917,81 @@
         }
       }
     },
+    "/api/admin/help-requests/{id}/complete": {
+      "put": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Complete Help Request",
+        "description": "Mark a specific help request as completed",
+        "operationId": "CompleteHelpRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/admin/help-requests/{id}/cancel": {
+      "put": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Cancel Help Request",
+        "description": "Cancel a specific help request",
+        "operationId": "CancelHelpRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/admin/reports": {
       "get": {
         "tags": [
           "OnTheWay.api"
         ],
         "summary": "Get All Reports",
-        "description": "Retrieve a list of all user reports with optional filtering and sorting",
+        "description": "Retrieve a list of all user reports with optional filtering by search, type, status, and sorting",
         "operationId": "GetReports",
         "parameters": [
           {
@@ -873,6 +1010,13 @@
           },
           {
             "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
             "in": "query",
             "schema": {
               "type": "string"
@@ -913,6 +1057,53 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/admin/reports/{id}/status": {
+      "put": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Update Report Status",
+        "description": "Update the status of a specific report (Solved, Open, Closed)",
+        "operationId": "UpdateReportStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReportStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
@@ -1051,13 +1242,81 @@
         }
       }
     },
+    "/api/admin/users/{id}/role/admin": {
+      "put": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Change User Role to Admin",
+        "description": "Promote a user's role to Admin. Only admins can perform this action.",
+        "operationId": "ChangeUserRoleToAdmin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/admin/users/register-admin": {
+      "post": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Register New Admin",
+        "description": "Register a new user with Admin role. Only authenticated admins can create new admin accounts.",
+        "operationId": "RegisterAdmin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterAdminRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/admin/dashboard": {
       "get": {
         "tags": [
           "OnTheWay.api"
         ],
         "summary": "Get Dashboard Statistics",
-        "description": "Retrieve dashboard statistics for a specified number of days (default: 30)",
+        "description": "Retrieve dashboard statistics including user role distribution and interactive map data for a specified number of days (default: 30)",
         "operationId": "GetDashboardData",
         "parameters": [
           {
@@ -1178,6 +1437,205 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Delete Announcement",
+        "description": "Delete a specific announcement by ID",
+        "operationId": "DeleteAnnouncement",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/account": {
+      "get": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Get User Account Info",
+        "description": "Retrieve the current authenticated user's account information including name, bio, and profile image",
+        "operationId": "GetUserAccount",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Update User Account Info",
+        "description": "Update the current authenticated user's account information including name, bio, and profile image",
+        "operationId": "UpdateUserAccount",
+        "parameters": [
+          {
+            "name": "fullName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bio",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileImage": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "profileImage": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/account/phone": {
+      "get": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Get User Phone Number",
+        "description": "Retrieve the current user's phone number and verification status",
+        "operationId": "GetPhoneNumber",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Update User Phone Number",
+        "description": "Set or update the user's phone number, sending a confirmation email with an OTP verification code",
+        "operationId": "UpdatePhoneNumber",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePhoneNumberRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/account/phone/verify": {
+      "post": {
+        "tags": [
+          "OnTheWay.api"
+        ],
+        "summary": "Verify Phone Number OTP",
+        "description": "Verify the OTP sent to user's email to confirm the new phone number",
+        "operationId": "VerifyPhoneNumberOtp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyPhoneNumberOtpRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1316,6 +1774,15 @@
         },
         "additionalProperties": false
       },
+      "IncidentStatus": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "IncidentType": {
         "enum": [
           0,
@@ -1351,6 +1818,42 @@
         },
         "additionalProperties": false
       },
+      "RefreshTokenRequest": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegisterAdminRequest": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "confirmPassword": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RegisterRequest": {
         "type": "object",
         "properties": {
@@ -1367,6 +1870,16 @@
             "nullable": true
           },
           "confirmPassword": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResendEmailOtpRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
             "type": "string",
             "nullable": true
           }
@@ -1404,6 +1917,16 @@
         },
         "additionalProperties": false
       },
+      "UpdatePhoneNumberRequest": {
+        "type": "object",
+        "properties": {
+          "newPhoneNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdateProfileRequest": {
         "type": "object",
         "properties": {
@@ -1418,6 +1941,15 @@
           "phoneNumber": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateReportStatusRequest": {
+        "type": "object",
+        "properties": {
+          "newStatus": {
+            "$ref": "#/components/schemas/IncidentStatus"
           }
         },
         "additionalProperties": false
@@ -1447,6 +1979,16 @@
             "type": "string",
             "nullable": true
           },
+          "otp": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VerifyPhoneNumberOtpRequest": {
+        "type": "object",
+        "properties": {
           "otp": {
             "type": "string",
             "nullable": true

@@ -11,6 +11,8 @@ import {
   SettingsPage,
   HelpRequestsPage,
   HelpRequestDetailsPage,
+  ForgotPassword,
+  ResetPassword,
 } from './pages';
 import { Login } from './pages/Login';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -20,6 +22,14 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPassword />,
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPassword />,
   },
   {
     element: (

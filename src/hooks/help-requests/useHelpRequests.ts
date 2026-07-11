@@ -26,10 +26,11 @@ export const useHelpRequests = (params: HelpRequestsQueryParams) => {
   return useQuery({
     queryKey: HELP_REQUESTS_QUERY_KEY(params),
     queryFn: async () => {
-      const apiParams: { search?: string; type?: string; sortOrder?: string } = {
+      const apiParams: { search?: string; type?: string; sortOrder?: string; status?: string } = {
         search: params.search,
         type: params.type,
         sortOrder: params.sortOrder,
+        status: params.status,
       };
       const response = await api.get<ApiResponse<HelpRequest[]>>('/admin/help-requests', {
         params: apiParams,
@@ -97,11 +98,61 @@ export const useUpdateHelpRequestStatus = () => {
       api.put(`/admin/help-requests/${id}/status`, { newStatus }),
     onSuccess: (_, { id, newStatus }) => {
       toast.success(`Request marked as ${newStatus}.`);
+
+      queryClient.setQueryData<HelpRequestDetails>(HELP_REQUEST_DETAILS_QUERY_KEY(id), (old) => old ? { ...old, status: newStatus } : old);
+      queryClient.setQueriesData<HelpRequestsListResponse>({ queryKey: ['help-requests'] }, (old) => {
+        if (!old || !old.data || !Array.isArray(old.data)) return old;
+        return { ...old, data: old.data.map((r) => r.id === id ? { ...r, status: newStatus } : r) };
+      });
+
       queryClient.invalidateQueries({ queryKey: ['help-requests'] });
       queryClient.invalidateQueries({ queryKey: HELP_REQUEST_DETAILS_QUERY_KEY(id) });
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to update request status.');
+    },
+  });
+};
+export const useCompleteHelpRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.put(`/admin/help-requests/${id}/complete`),
+    onSuccess: (_, id) => {
+      toast.success('Help request marked as completed.');
+
+      queryClient.setQueryData<HelpRequestDetails>(HELP_REQUEST_DETAILS_QUERY_KEY(id), (old) => old ? { ...old, status: 'Completed' } : old);
+      queryClient.setQueriesData<HelpRequestsListResponse>({ queryKey: ['help-requests'] }, (old) => {
+        if (!old || !old.data || !Array.isArray(old.data)) return old;
+        return { ...old, data: old.data.map((r) => r.id === id ? { ...r, status: 'Completed' } : r) };
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['help-requests'] });
+      queryClient.invalidateQueries({ queryKey: HELP_REQUEST_DETAILS_QUERY_KEY(id) });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to complete help request.');
+    },
+  });
+};
+
+export const useCancelHelpRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.put(`/admin/help-requests/${id}/cancel`),
+    onSuccess: (_, id) => {
+      toast.success('Help request cancelled.');
+
+      queryClient.setQueryData<HelpRequestDetails>(HELP_REQUEST_DETAILS_QUERY_KEY(id), (old) => old ? { ...old, status: 'Cancelled' } : old);
+      queryClient.setQueriesData<HelpRequestsListResponse>({ queryKey: ['help-requests'] }, (old) => {
+        if (!old || !old.data || !Array.isArray(old.data)) return old;
+        return { ...old, data: old.data.map((r) => r.id === id ? { ...r, status: 'Cancelled' } : r) };
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['help-requests'] });
+      queryClient.invalidateQueries({ queryKey: HELP_REQUEST_DETAILS_QUERY_KEY(id) });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to cancel help request.');
     },
   });
 };

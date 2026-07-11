@@ -18,12 +18,15 @@ const HelpRequestsPage = () => {
   const search = searchParams.get('search') ?? '';
   const category = searchParams.get('category') ?? '';
   const status = searchParams.get('status') ?? '';
+  const sortOrder = searchParams.get('sortOrder') ?? '';
 
   const queryParams: HelpRequestsQueryParams = {
     page: 1,
     pageSize: 10,
     search: search || undefined,
     type: category || undefined,
+    sortOrder: sortOrder || undefined,
+    status: status || undefined,
   };
 
   const { data, isLoading, isError, refetch } = useHelpRequests(queryParams);
@@ -31,7 +34,7 @@ const HelpRequestsPage = () => {
   const { paginatedData, currentPage, totalPages, goToPage } = useClientPagination(
     data?.data ?? [],
     10,
-    [search, category, status]
+    [search, category, status, sortOrder]
   );
   const isFiltered = !!(search || category || status);
 
@@ -52,6 +55,15 @@ const HelpRequestsPage = () => {
       return next;
     });
   };
+
+    const handleSortOrderChange = (value: string) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (value) next.set('sortOrder', value);
+        else next.delete('sortOrder');
+        return next;
+      });
+    };
 
   const handleStatusChange = (value: string) => {
     setSearchParams((prev) => {
@@ -82,10 +94,12 @@ const HelpRequestsPage = () => {
         search={search}
         category={category}
         status={status}
+        sortOrder={sortOrder}
         onSearchChange={handleSearchChange}
         onCategoryChange={handleCategoryChange}
         onStatusChange={handleStatusChange}
         onClearFilters={handleClearFilters}
+        onSortOrderChange={handleSortOrderChange}
         isFiltered={isFiltered}
       />
 
@@ -112,8 +126,6 @@ const HelpRequestsPage = () => {
           onPageChange={goToPage}
         />
       )}
-
-
     </section>
   );
 };

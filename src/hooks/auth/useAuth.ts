@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth-store';
 import api from '@/lib/axios';
 import type { ApiResponse } from '@/types/api';
-import type { LoginRequest, LoginResponse, AdminUser } from '@/types/auth';
+import type { LoginRequest, LoginResponse, AdminUser, ForgetPasswordRequest, ResetPasswordRequest, ForgetPasswordResponse, ResetPasswordResponse } from '@/types/auth';
 import { toast } from 'sonner';
 
 // ─── Auth State ──────────────────────────────────────────────────────────────
@@ -65,7 +65,7 @@ const extractLoginTokens = (
   return { token, refreshToken };
 };
 
-const fetchAdminUser = async (credentials: LoginRequest, token: string): Promise<AdminUser> => {
+const fetchAdminUser = async (credentials: { email?: string }, token: string): Promise<AdminUser> => {
   try {
     const response = await api.get<ApiResponse<AdminProfile>>('/admin/settings/profile', {
       headers: { Authorization: `Bearer ${token}` },
@@ -87,8 +87,8 @@ const fetchAdminUser = async (credentials: LoginRequest, token: string): Promise
 
   return {
     id: 'admin-1',
-    email: credentials.email,
-    name: credentials.email.split('@')[0],
+    email: credentials.email || 'admin@example.com',
+    name: credentials.email ? credentials.email.split('@')[0] : 'Admin',
     role: 'Admin',
     status: 'Active',
   };
@@ -116,6 +116,31 @@ export const useLogin = () => {
     },
   });
 };
+
+export const useForgetPassword = () => {
+  return useMutation({
+    mutationFn: async (data: ForgetPasswordRequest) => {
+      const response = await api.post<ApiResponse<ForgetPasswordResponse>>('/auth/forget-password', data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success('Password reset email sent if account exists.');
+    },
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: async (data: ResetPasswordRequest) => {
+      const response = await api.post<ApiResponse<ResetPasswordResponse>>('/auth/reset-password', data);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success('Password successfully reset. You can now login.');
+    },
+  });
+};
+
 
 // ─── Logout ──────────────────────────────────────────────────────────────────
 

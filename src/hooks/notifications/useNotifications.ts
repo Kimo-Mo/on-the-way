@@ -54,7 +54,7 @@ export function useGetNotifications(params?: AdminNotificationsApiParams) {
  * Fetches a single notification from GET /api/admin/notifications/{id}.
  * Backend wraps the response in ApiResponse<AnnouncementDetailsResponse>.
  */
-export function useGetNotificationById(id: string) {
+export function useGetNotificationById(id: string, options?: { enabled?: boolean }) {
   return useQuery<AdminNotification>({
     queryKey: NOTIFICATION_DETAIL_QUERY_KEY(id),
     queryFn: async () => {
@@ -73,7 +73,7 @@ export function useGetNotificationById(id: string) {
 
       return envelope.data;
     },
-    enabled: !!id,
+    enabled: !!id && (options?.enabled ?? true),
     staleTime: 60_000,
   });
 }

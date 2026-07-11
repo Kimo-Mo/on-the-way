@@ -26,6 +26,10 @@ interface CreateNotificationFormProps {
   onClose: () => void;
 }
 
+function toISOString(dateStr: string): string {
+  return new Date(dateStr).toISOString();
+}
+
 export function CreateNotificationForm({ onClose }: CreateNotificationFormProps) {
   const { mutate: createNotification, isPending } = useCreateNotification();
   const [roles, setRoles] = useState<NotificationRole[]>([]);
@@ -36,6 +40,7 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
     handleSubmit,
     watch,
     setValue,
+    trigger,
     formState: { errors },
   } = useForm<CreateNotificationFormValues>({
     resolver: zodResolver(createNotificationSchema),
@@ -44,7 +49,6 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
       content: '',
       targetAudience: 'Broadcast',
       category: 'Maintenance',
-      priority: 'Low',
       roles: [],
       publishDate: null,
       action: 'draft',
@@ -56,18 +60,37 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
   const messageLength = watch('content')?.length ?? 0;
 
   const onSubmit = (values: CreateNotificationFormValues) => {
-    // Build the exact payload as specified by the backend API:
-    // POST /api/admin/notifications — CreateAnnouncementRequest
+    let publishDate: string | null;
+    let isPublished: boolean;
+
+    if (values.action === 'publish') {
+      publishDate = new Date().toISOString();
+      isPublished = true;
+    } else if (values.action === 'schedule') {
+      publishDate = values.publishDate ? toISOString(values.publishDate) : null;
+      isPublished = false;
+    } else {
+      publishDate = null;
+      isPublished = false;
+    }
+
     const payload: CreateAnnouncementRequest = {
       title: values.title,
       content: values.content,
-      // Backend expects the raw targetAudience string; "Broadcast" → "All Users" per API docs
       targetAudience: values.targetAudience === 'Broadcast' ? 'All Users' : values.targetAudience,
       category: values.category,
-      publishDate: values.publishDate ?? null,
-      isPublished: values.action === 'publish',
+      publishDate,
+      isPublished,
     };
     createNotification(payload, { onSuccess: onClose });
+  };
+
+  const handleActionSubmit = async (action: 'publish' | 'draft' | 'schedule') => {
+    setValue('action', action, { shouldValidate: false });
+    const valid = await trigger();
+    if (valid) {
+      handleSubmit(onSubmit)();
+    }
   };
 
   return (
@@ -99,46 +122,26 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
         </div>
       </div>
 
-      {/* Type & Priority */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <Label>Type</Label>
-          <Select
-            value={watch('category')}
-            onValueChange={(val) =>
-              setValue('category', val as CreateNotificationFormValues['category'], { shouldValidate: true })
-            }>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Maintenance">Maintenance</SelectItem>
-              <SelectItem value="Policy">Policy</SelectItem>
-              <SelectItem value="Safety">Safety</SelectItem>
-              <SelectItem value="Legal">Legal</SelectItem>
-              <SelectItem value="Event">Event</SelectItem>
-            </SelectContent>
-          </Select>
-          {errors.category && <p className="text-destructive text-xs">{errors.category.message}</p>}
-        </div>
-        <div className="space-y-1">
-          <Label>Priority</Label>
-          <Select
-            value={watch('priority')}
-            onValueChange={(val) =>
-              setValue('priority', val as CreateNotificationFormValues['priority'], { shouldValidate: true })
-            }>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select priority" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="High">High</SelectItem>
-              <SelectItem value="Medium">Medium</SelectItem>
-              <SelectItem value="Low">Low</SelectItem>
-            </SelectContent>
-          </Select>
-          {errors.priority && <p className="text-destructive text-xs">{errors.priority.message}</p>}
-        </div>
+      {/* Type */}
+      <div className="space-y-1">
+        <Label>Type</Label>
+        <Select
+          value={watch('category')}
+          onValueChange={(val) =>
+            setValue('category', val as CreateNotificationFormValues['category'], { shouldValidate: true })
+          }>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Maintenance">Maintenance</SelectItem>
+            <SelectItem value="Policy">Policy</SelectItem>
+            <SelectItem value="Safety">Safety</SelectItem>
+            <SelectItem value="Legal">Legal</SelectItem>
+            <SelectItem value="Event">Event</SelectItem>
+          </SelectContent>
+        </Select>
+        {errors.category && <p className="text-destructive text-xs">{errors.category.message}</p>}
       </div>
 
       {/* Audience */}
@@ -176,8 +179,9 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
             id="notif-schedule"
             type="datetime-local"
             min={new Date().toISOString().slice(0, 16)}
-            onChange={(e) => setValue('publishDate', e.target.value || null)}
+            onChange={(e) => setValue('publishDate', e.target.value || null, { shouldValidate: true })}
           />
+          {errors.publishDate && <p className="text-destructive text-xs">{errors.publishDate.message}</p>}
         </div>
       )}
 
@@ -187,10 +191,7 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
           type="button"
           variant="outline"
           disabled={isPending}
-          onClick={() => {
-            setValue('action', 'draft');
-            handleSubmit(onSubmit)();
-          }}>
+          onClick={() => handleActionSubmit('draft')}>
           {isPending ? 'Saving...' : 'Save Draft'}
         </Button>
         <Button
@@ -201,8 +202,7 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
             if (!showSchedule) {
               setShowSchedule(true);
             } else {
-              setValue('action', 'schedule');
-              handleSubmit(onSubmit)();
+              handleActionSubmit('schedule');
             }
           }}>
           {showSchedule ? (isPending ? 'Scheduling...' : 'Confirm Schedule') : 'Schedule'}
@@ -210,10 +210,7 @@ export function CreateNotificationForm({ onClose }: CreateNotificationFormProps)
         <Button
           type="button"
           disabled={isPending}
-          onClick={() => {
-            setValue('action', 'publish');
-            handleSubmit(onSubmit)();
-          }}>
+          onClick={() => handleActionSubmit('publish')}>
           {isPending ? 'Publishing...' : 'Publish Now'}
         </Button>
         <Button type="button" variant="secondary" disabled={isPending} onClick={onClose}>

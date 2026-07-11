@@ -1,22 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Eye, Trash2, CalendarDays, Users, BellRing } from 'lucide-react';
-import type { AdminNotification, NotificationStatus } from '@/types/notifications';
+import { Eye, Trash2, CalendarDays, BellRing } from 'lucide-react';
+import type { AdminNotification } from '@/types/notifications';
+import { deriveNotificationStatus } from '@/types/notifications';
 import { NotificationStatusBadge } from './NotificationStatusBadge';
-import { AUDIENCE_LABELS } from '@/types/notifications';
-import { Badge } from '@/components/ui/badge';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { NotificationDetailsModal } from './NotificationDetailsModal';
+import { DeleteNotificationModal } from './DeleteNotificationModal';
 
 interface NotificationRowProps {
   notification: AdminNotification;
@@ -25,18 +14,16 @@ interface NotificationRowProps {
 }
 
 export function NotificationRow({ notification, onDelete, isDeleting }: NotificationRowProps) {
-  const [showViewDialog, setShowViewDialog] = useState(false);
-  const canDelete = notification.status === 'Draft' || notification.status === 'Scheduled';
+  const [showDetails, setShowDetails] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const status = deriveNotificationStatus(notification.publishDate);
 
   return (
     <div className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors shadow-sm">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <p className="font-semibold text-base truncate">{notification.title}</p>
-          <NotificationStatusBadge status={notification.status as NotificationStatus} />
-          {notification.priority === 'High' && <Badge variant="warning">High Priority</Badge>}
-          {notification.priority === 'Medium' && <Badge variant="outline">Medium Priority</Badge>}
-          {notification.priority === 'Low' && <Badge variant="secondary">Low Priority</Badge>}
+          <NotificationStatusBadge status={status} />
         </div>
 
         <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
@@ -47,128 +34,44 @@ export function NotificationRow({ notification, onDelete, isDeleting }: Notifica
           <div className="flex items-center gap-1.5">
             <CalendarDays className="h-3.5 w-3.5" />
             <span>
-              {notification.publishDate ? new Date(notification.publishDate).toLocaleDateString() : '—'}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Users className="h-3.5 w-3.5" />
-            <span className="capitalize">
-              {notification.targetAudience === 'Broadcast'
-                ? 'All users'
-                : (notification.roles ?? []).join(', ')}
+              {notification.publishDate ? new Date(notification.publishDate.endsWith('Z') ? notification.publishDate : notification.publishDate + 'Z').toLocaleDateString() : '—'}
             </span>
           </div>
         </div>
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
-        {/* View dialog trigger */}
         <Button
           size="icon"
           variant="ghost"
           title="View details"
-          onClick={() => setShowViewDialog(true)}>
+          onClick={() => setShowDetails(true)}>
           <Eye className="h-4 w-4 text-muted-foreground" />
         </Button>
 
-        {/* View details dialog */}
-        <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Notification Details</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 text-sm mt-2">
-              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                <div>
-                  <span className="text-xs text-muted-foreground block mb-1">Status</span>
-                  <NotificationStatusBadge status={notification.status as NotificationStatus} />
-                </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block mb-1">Priority</span>
-                  {notification.priority === 'High' && <Badge variant="warning">High</Badge>}
-                  {notification.priority === 'Medium' && <Badge variant="outline">Medium</Badge>}
-                  {notification.priority === 'Low' && <Badge variant="secondary">Low</Badge>}
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Category</p>
-                  <p className="font-medium">{notification.category}</p>
-                </div>
-                <div>
-                  <span className="text-xs text-muted-foreground block mb-1">Audience</span>
-                  <p className="font-medium">
-                    {AUDIENCE_LABELS[notification.targetAudience as keyof typeof AUDIENCE_LABELS] ??
-                      notification.targetAudience}
-                  </p>
-                </div>
-                {(notification.roles ?? []).length > 0 && (
-                  <div className="col-span-2">
-                    <span className="text-xs text-muted-foreground block mb-1">Roles</span>
-                    <div className="flex gap-2 flex-wrap">
-                      {(notification.roles ?? []).map((role) => (
-                        <Badge key={role} variant="outline">
-                          {role}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <div>
-                  <span className="text-xs text-muted-foreground block mb-1">Created</span>
-                  <p className="font-medium">
-                    {notification.createdAt
-                      ? new Date(notification.createdAt).toLocaleString()
-                      : '—'}
-                  </p>
-                </div>
-                {notification.publishDate && (
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Publish Date</p>
-                    <p className="font-medium">
-                      {new Date(notification.publishDate).toLocaleString()}
-                    </p>
-                  </div>
-                )}
-              </div>
-              <div>
-                <span className="text-xs text-muted-foreground block mb-1">Title</span>
-                <p className="font-semibold">{notification.title}</p>
-              </div>
-              <div>
-                <span className="text-xs text-muted-foreground block mb-1">Message</span>
-                <p className="text-sm whitespace-pre-wrap">{notification.content}</p>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        {/* Delete with confirmation */}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button size="icon" variant="ghost" title="Delete" disabled={!canDelete || isDeleting}>
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                Are you sure you want to delete this notification?
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the notification.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => onDelete(notification?.id ?? '')}
-                variant="destructive"
-              >
-                Confirm
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <Button
+          size="icon"
+          variant="ghost"
+          title="Delete"
+          disabled={isDeleting}
+          onClick={() => setShowDelete(true)}>
+          <Trash2 className="h-4 w-4 text-destructive" />
+        </Button>
       </div>
+
+      <NotificationDetailsModal
+        notificationId={notification.id ?? null}
+        isOpen={showDetails}
+        onClose={() => setShowDetails(false)}
+      />
+
+      <DeleteNotificationModal
+        notificationId={notification.id ?? null}
+        isOpen={showDelete}
+        onClose={() => setShowDelete(false)}
+        onDelete={onDelete}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

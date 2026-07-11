@@ -18,6 +18,7 @@ const ReportsManagement = () => {
   const search = searchParams.get('search') ?? '';
   const obstacleType = searchParams.get('obstacleType') ?? '';
   const sortOrder = searchParams.get('sortOrder') ?? '';
+  const status = searchParams.get('status') ?? '';
 
   const queryParams: ReportsQueryParams = {
     page: 1,
@@ -25,6 +26,7 @@ const ReportsManagement = () => {
     search: search || undefined,
     type: obstacleType || undefined,
     sortOrder: sortOrder || undefined,
+    status: status || undefined,
   };
 
   const { data, isLoading, isError, refetch } = useReports(queryParams);
@@ -32,9 +34,9 @@ const ReportsManagement = () => {
   const { paginatedData, currentPage, totalPages, goToPage } = useClientPagination(
     data?.data ?? [],
     10,
-    [search, obstacleType, sortOrder]
+    [search, obstacleType, sortOrder, status]
   );
-  const isFiltered = !!(search || obstacleType);
+  const isFiltered = !!(search || obstacleType || status);
 
   const handleSearchChange = (value: string) => {
     setSearchParams((prev) => {
@@ -63,6 +65,15 @@ const ReportsManagement = () => {
     });
   };
 
+  const handleStatusChange = (value: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (value && value !== 'all') next.set('status', value);
+      else next.delete('status');
+      return next;
+    });
+  };
+
   const handleClearFilters = () => {
     setSearchParams(new URLSearchParams());
   };
@@ -86,9 +97,11 @@ const ReportsManagement = () => {
         search={search}
         obstacleType={obstacleType}
         sortOrder={sortOrder}
+        status={status}
         onSearchChange={handleSearchChange}
         onObstacleTypeChange={handleObstacleTypeChange}
         onSortOrderChange={handleSortOrderChange}
+        onStatusChange={handleStatusChange}
         onClearFilters={handleClearFilters}
         isFiltered={isFiltered}
       />

@@ -1,6 +1,4 @@
-export * from './FlagUserDialog';
 export * from './ObstacleTypeBadge';
-export * from './RemoveReportDialog';
 export * from './ReportCard';
 export * from './ReportCardSkeleton';
 export * from './ReportImageGallery';

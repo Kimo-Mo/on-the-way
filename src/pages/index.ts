@@ -8,3 +8,5 @@ export { default as AnalyticsPage } from './AnalyticsPage';
 export { default as SettingsPage } from './SettingsPage';
 export { default as HelpRequestsPage } from './HelpRequestsPage';
 export { default as HelpRequestDetailsPage } from './HelpRequestDetailsPage';
+export { ForgotPassword } from './ForgotPassword';
+export { ResetPassword } from './ResetPassword';

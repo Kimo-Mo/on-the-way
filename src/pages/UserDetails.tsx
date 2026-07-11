@@ -7,13 +7,24 @@ import {
   CardHeader,
   Progress,
   Skeleton,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  Label,
 } from '@/components/ui';
+import { useState } from 'react';
 import { ChevronLeft, UserX, Loader2 } from 'lucide-react';
-import { useUserDetails, useUpdateUserStatus } from '@/hooks/users/useUsers';
+import { useUserDetails, useUpdateUserStatus, useMakeUserAdmin } from '@/hooks/users/useUsers';
 import { UserRoleBadge, UserStatusBadge } from '@/components/users';
 import { CardSkeleton } from '@/components/shared';
 
@@ -38,6 +49,19 @@ const UserDetails = () => {
 
   const { data: user, isLoading, isError } = useUserDetails(id ?? '');
   const { mutate: updateStatus, isPending: isUpdatingStatus } = useUpdateUserStatus();
+  const { mutate: makeAdmin, isPending: isMakingAdmin } = useMakeUserAdmin();
+  const isUpdating = isUpdatingStatus || isMakingAdmin;
+
+  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+
+  const confirmRoleChange = () => {
+    if (!user) return;
+    makeAdmin(user.id, {
+      onSuccess: () => {
+        setRoleDialogOpen(false);
+      },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -104,26 +128,34 @@ const UserDetails = () => {
                 <UserStatusBadge status={user.status} />
               </div>
             </div>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" disabled={isUpdatingStatus}>
-                  {isUpdatingStatus && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Change Status
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="status">Change Status</Label>
+              <Select
+                value={user.status}
+                onValueChange={(val) =>
+                  updateStatus({ id: user.id, status: val as 'Active' | 'Suspended' | 'Banned' })
+                }
+                disabled={isUpdating}>
+                <SelectTrigger id="status" className="w-48">
+                  <SelectValue placeholder="Change Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Active">Active</SelectItem>
+                  <SelectItem value="Suspended">Suspended</SelectItem>
+                  <SelectItem value="Banned">Banned</SelectItem>
+                </SelectContent>
+              </Select>
+              {user.role !== 'Admin' && (
+                <Button
+                  variant="default"
+                  onClick={() => setRoleDialogOpen(true)}
+                  disabled={isUpdating}
+                  className="w-48">
+                  {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Mark as Admin
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => updateStatus({ id: user.id, status: 'Active' })}>
-                  Set Active
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => updateStatus({ id: user.id, status: 'Suspended' })}>
-                  Suspend User
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => updateStatus({ id: user.id, status: 'Banned' })}>
-                  Ban User
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -175,6 +207,22 @@ const UserDetails = () => {
           </div>
         )}
       </div>
+
+      <AlertDialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Change User Role</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to grant Admin privileges to this user? This is a sensitive
+              action.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setRoleDialogOpen(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmRoleChange}>Confirm</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 };

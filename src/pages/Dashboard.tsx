@@ -8,6 +8,8 @@ import type {
   RecentActivityDto,
   ChartPoint,
   CategoryCount,
+  MapEvent,
+  MapEventCategory,
 } from '@/types/dashboard';
 import { lazy, Suspense, memo } from 'react';
 
@@ -22,6 +24,11 @@ const HelpRequestsCategoryChart = lazy(() =>
 const UserDistributionChart = lazy(() =>
   import('@/components/dashboard/UserDistributionChart').then((m) => ({
     default: m.UserDistributionChart,
+  }))
+);
+const InteractiveMap = lazy(() =>
+  import('@/components/dashboard/InteractiveMap').then((m) => ({
+    default: m.InteractiveMap,
   }))
 );
 
@@ -128,7 +135,6 @@ const Dashboard = () => {
   // ChartPoint[] is already the right shape for the chart components (label + value)
   const reportsOverTime: ChartPoint[] = data?.reportsOverTime ?? [];
   const helpRequestsByCategory: ChartPoint[] = data?.helpRequestsByCategory ?? [];
-  const userGrowth: ChartPoint[] = data?.userGrowth ?? [];
 
   // Map ChartPoint[] → CategoryCount[] for the bar chart
   const categoryCounts: CategoryCount[] = helpRequestsByCategory.map((cp) => ({
@@ -138,13 +144,33 @@ const Dashboard = () => {
   }));
 
   // Map ChartPoint[] → distribution segments for the pie chart
-  const totalUserGrowth = userGrowth.reduce((sum, p) => sum + p.value, 0);
-  const userDistribution = userGrowth.map((cp) => ({
-    label: cp.label,
-    count: cp.value,
-    percentage: totalUserGrowth > 0 ? Math.round((cp.value / totalUserGrowth) * 100) : 0,
+  const userDistribution = (data?.userRoleDistribution ?? []).map((cp) => ({
+    label: cp.role,
+    count: cp.count,
+    percentage: cp.percentage,
     targetRoute: '/users',
   }));
+
+  const mapEvents: MapEvent[] = [
+    ...(data?.mapData?.recentIncidents ?? []).map((inc) => ({
+      id: inc.id,
+      category: 'urgentReport' as MapEventCategory,
+      title: inc.type,
+      coordinates: { lat: inc.latitude, lng: inc.longitude },
+      status: 'active',
+      timestamp: inc.createdAt,
+      targetRoute: `/reports/${inc.id}`,
+    })),
+    ...(data?.mapData?.recentHelpRequests ?? []).map((req) => ({
+      id: req.id,
+      category: 'helpRequest' as MapEventCategory,
+      title: req.type,
+      coordinates: { lat: req.latitude, lng: req.longitude },
+      status: 'active',
+      timestamp: req.createdAt,
+      targetRoute: `/help-requests/${req.id}`,
+    })),
+  ];
 
   const activityEventsEmpty = !isLoading && activityEvents.length === 0;
 
@@ -161,12 +187,24 @@ const Dashboard = () => {
 
       <StatsCards metrics={metrics} isLoading={isLoading} error={error} />
 
-      <RecentActivity
-        events={activityEvents}
-        isLoading={isLoading}
-        error={error}
-        isEmpty={activityEventsEmpty}
-      />
+      <div className="grid gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <Suspense fallback={<CardSkeleton count={1} className="h-100" />}>
+          <div className="md:col-span-1 lg:col-span-2">
+            <InteractiveMap
+              events={mapEvents}
+              isLoading={isLoading}
+              error={error}
+              isEmpty={!isLoading && mapEvents.length === 0}
+            />
+          </div>
+        </Suspense>
+        <RecentActivity
+          events={activityEvents}
+          isLoading={isLoading}
+          error={error}
+          isEmpty={activityEventsEmpty}
+        />
+      </div>
 
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         <Suspense fallback={<CardSkeleton count={1} />}>
@@ -197,7 +235,6 @@ const Dashboard = () => {
           />
         </Suspense>
       </div>
-
     </section>
   );
 };

@@ -14,9 +14,11 @@ interface HelpRequestsToolbarProps {
   search: string;
   category: string;
   status: string;
+  sortOrder: string;
   onSearchChange: (value: string) => void;
   onCategoryChange: (value: string) => void;
   onStatusChange: (value: string) => void;
+  onSortOrderChange: (value: string) => void;
   onClearFilters: () => void;
   isFiltered: boolean;
 }
@@ -25,9 +27,11 @@ export const HelpRequestsToolbar = ({
   search,
   category,
   status,
+  sortOrder,
   onSearchChange,
   onCategoryChange,
   onStatusChange,
+  onSortOrderChange,
   onClearFilters,
   isFiltered,
 }: HelpRequestsToolbarProps) => {
@@ -79,13 +83,23 @@ export const HelpRequestsToolbar = ({
         </SelectContent>
       </Select>
 
+      <Select value={sortOrder} onValueChange={onSortOrderChange}>
+        <SelectTrigger className="w-40">
+          <SelectValue placeholder="Sort by" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="desc">Latest</SelectItem>
+          <SelectItem value="asc">Oldest</SelectItem>
+        </SelectContent>
+      </Select>
+
       <Select value={status || 'all'} onValueChange={onStatusChange}>
         <SelectTrigger className="w-40">
           <SelectValue placeholder="All Statuses" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Statuses</SelectItem>
-          <SelectItem value="Active">Active</SelectItem>
+          <SelectItem value="Accepted">Accepted</SelectItem>
           <SelectItem value="Pending">Pending</SelectItem>
           <SelectItem value="Completed">Completed</SelectItem>
           <SelectItem value="Cancelled">Cancelled</SelectItem>

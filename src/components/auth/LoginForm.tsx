@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { ArrowRight, Eye, EyeClosed, Loader2, Lock, Mail } from 'lucide-react';
 import { AxiosError } from 'axios';
+import { Link } from 'react-router';
 
 import { useLogin } from '@/hooks/auth/useAuth';
 import { Button } from '../ui/button';
@@ -93,6 +94,13 @@ export const LoginForm = () => {
               </FormItem>
             )}
           />
+          <div className="flex justify-end">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-primary hover:underline font-medium">
+              Forgot Password?
+            </Link>
+          </div>
           {form.formState.errors.root && (
             <div className="text-sm font-medium text-destructive">
               {form.formState.errors.root.message}
@@ -100,7 +108,7 @@ export const LoginForm = () => {
           )}
           <Button type="submit" className="w-full" disabled={isPending}>
             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Secure Login <ArrowRight />
+            Secure Login <ArrowRight className="ml-2" />
           </Button>
         </form>
       </Form>

@@ -45,6 +45,7 @@ export interface HelpRequestsQueryParams {
   search?: string;
   type?: string;
   sortOrder?: string;
+  status?: string;
 }
 
 // ─── List Response ─────────────────────────────────────────────────────────────

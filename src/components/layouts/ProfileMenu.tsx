@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { User, Settings, LogOut } from 'lucide-react';
+import { User, Settings, LogOut, Bell } from 'lucide-react';
 import { Link } from 'react-router';
 import { useAuth } from '@/hooks/auth/useAuth';
 
@@ -24,17 +24,19 @@ const ProfileMenu = () => {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="flex flex-col">
           <span>{user?.name || 'My Account'}</span>
-          {user?.email && <span className="text-xs font-normal text-muted-foreground">{user.email}</span>}
+          {user?.email && (
+            <span className="text-xs font-normal text-muted-foreground">{user.email}</span>
+          )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link to="/profile" className="flex items-center gap-2 w-full cursor-pointer">
-            <User className="h-4 w-4" />
-            <span>Profile</span>
+          <Link to="/notifications" className="flex items-center gap-2 w-full cursor-pointer">
+            <Bell className="h-4 w-4" />
+            <span>Notifications</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/Settings" className="flex items-center gap-2 w-full cursor-pointer">
+          <Link to="/settings" className="flex items-center gap-2 w-full cursor-pointer">
             <Settings className="h-4 w-4" />
             <span>Settings</span>
           </Link>

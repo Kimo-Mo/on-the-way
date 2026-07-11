@@ -9,7 +9,7 @@ interface UserDistributionChartProps {
   targetRoute?: string;
 }
 
-const pieColors = ['var(--primary)', 'var(--info)', 'var(--warning)', 'var(--success)'];
+const pieColors = ['var(--primary)', 'var(--warning)'];
 
 export const UserDistributionChart = ({
   data,

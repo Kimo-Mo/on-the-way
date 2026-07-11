@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import type { MapEvent } from '@/types/dashboard';
 import { DashboardPanel } from './DashboardPanel';
-import { AlertCircle, CircleHelp, Building2 } from 'lucide-react';
+import { AlertCircle, CircleHelp } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -21,10 +21,9 @@ interface InteractiveMapProps {
   isEmpty?: boolean;
 }
 
-const categoryLabels: Record<MapEvent['category'], string> = {
+const categoryLabels: Record<string, string> = {
   urgentReport: 'Urgent Report',
   helpRequest: 'Help Request',
-  provider: 'Provider',
 };
 
 export const InteractiveMap = ({ events, isLoading, error, isEmpty }: InteractiveMapProps) => {
@@ -59,9 +58,9 @@ export const InteractiveMap = ({ events, isLoading, error, isEmpty }: Interactiv
     <DashboardPanel title="Live Map Events" action={<Legend />}>
       <div className="relative z-0 h-85 w-full overflow-hidden rounded-xl border border-border">
         <MapContainer
-          center={[events[0].coordinates.lat, events[0].coordinates.lng]}
-          zoom={25}
-          scrollWheelZoom={false}
+          center={[30.05, 31.23]}
+          zoom={7}
+          scrollWheelZoom={true}
           style={{ height: '100%', width: '100%' }}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -102,10 +101,6 @@ const Legend = () => (
     <div className="flex items-center gap-1">
       <CircleHelp className="size-3 text-warning" />
       <span className="text-muted-foreground">Help</span>
-    </div>
-    <div className="flex items-center gap-1">
-      <Building2 className="size-3 text-success" />
-      <span className="text-muted-foreground">Provider</span>
     </div>
   </div>
 );

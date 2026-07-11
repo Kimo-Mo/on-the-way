@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 // ─── Backend API Schemas (matching API_DOCUMENTATION.md exactly) ──────────────
 
 /** POST /api/auth/register — request body */
@@ -32,6 +34,20 @@ export interface ResetPasswordRequest {
   newPassword: string;
   confirmNewPassword: string;
 }
+
+export const forgetPasswordSchema = z.object({
+  email: z.string().email('Invalid email address'),
+});
+
+export const resetPasswordSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  otp: z.string().min(1, 'OTP is required'),
+  newPassword: z.string().min(6, 'Password must be at least 6 characters'),
+  confirmNewPassword: z.string().min(6, 'Confirm Password must be at least 6 characters'),
+}).refine((data) => data.newPassword === data.confirmNewPassword, {
+  message: "Passwords don't match",
+  path: ['confirmNewPassword'],
+});
 
 /** POST /api/auth/google-login — request body */
 export interface GoogleLoginRequest {

@@ -1,41 +1,26 @@
-import { useSearchParams } from 'react-router';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useGetNotifications, useDeleteNotification } from '@/hooks/notifications/useNotifications';
 import { NotificationsList, NotificationsListToolbar } from '@/components/notifications';
 import { PageHeader } from '@/components/shared';
 import { useClientPagination } from '@/hooks/useClientPagination';
 import { ClientPagination } from '@/components/ui';
-import type { NotificationStatus } from '@/types/notifications';
-
-type FilterOption = NotificationStatus | 'All';
 
 export function NotificationsPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const { data = [], isLoading, isError, refetch } = useGetNotifications();
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('');
+
+  const { data = [], isLoading, isError, refetch } = useGetNotifications({
+    search: search || undefined,
+    category: category || undefined,
+  });
   const { mutate: deleteNotification, isPending: isDeleting } = useDeleteNotification();
 
-  const activeFilter = (searchParams.get('status') as FilterOption) || 'All';
-
-  const filteredData = useMemo(() => {
-    if (activeFilter === 'All') return data;
-    return data.filter((n) => n.status === activeFilter);
-  }, [data, activeFilter]);
-
   const { paginatedData, currentPage, totalPages, goToPage } = useClientPagination(
-    filteredData,
+    data,
     10,
-    [activeFilter]
+    [search, category]
   );
-
-  const handleFilterChange = (filter: FilterOption) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (filter !== 'All') next.set('status', filter);
-      else next.delete('status');
-      return next;
-    });
-  };
 
   return (
     <div className="py-7 space-y-6">
@@ -45,8 +30,10 @@ export function NotificationsPage() {
       />
 
       <NotificationsListToolbar
-        activeFilter={activeFilter}
-        onFilterChange={handleFilterChange}
+        search={search}
+        category={category}
+        onSearchChange={setSearch}
+        onCategoryChange={setCategory}
         showCreateForm={showCreateForm}
         setShowCreateForm={setShowCreateForm}
         onCreateNew={() => setShowCreateForm(true)}
@@ -59,7 +46,7 @@ export function NotificationsPage() {
         onDelete={deleteNotification}
         isDeleting={isDeleting}
       />
-      {!isLoading && !isError && filteredData.length > 0 && (
+      {!isLoading && !isError && data.length > 0 && (
         <ClientPagination
           currentPage={currentPage}
           totalPages={totalPages}
