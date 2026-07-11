@@ -18,15 +18,7 @@ export const ReportImageGallery = ({ imageUrl }: ReportImageGalleryProps) => {
 
   return (
     <div>
-      <img
-        src={
-          import.meta.env.VITE_API_BASE_URL?.endsWith('/api')
-            ? import.meta.env.VITE_API_BASE_URL?.slice(0, -4) + imageUrl
-            : import.meta.env.VITE_API_BASE_URL + imageUrl
-        }
-        alt="Report image"
-        className="w-full h-64 object-contain"
-      />
+      <img src={imageUrl} alt="Report image" className="w-full h-64 object-contain" />
     </div>
   );
 };
